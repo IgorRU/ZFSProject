@@ -18,13 +18,13 @@ public class PhysicalDrive {
 	static long ZFSL0NameValueStart = ZFSL0Start+32;
 	
 	static int SectorLength = 512; 
-	static int ZFSLabelSize = SectorLength*1024*512; // 256k
+	static int ZFSLabelSize = SectorLength*1024*512; //   256k
 	public String PhysicalDrivePath;
 	public GPT gptpd = new GPT();
 	private int LabelBest = 2;
 
-	private long LBAStart3Offset = 1050624L*SectorLength;	 // 0x000100800
-	private long LBAStart3End    = 5860533134L*SectorLength; // 0x15D50A38E		
+	private long LBAStart3Offset = 1050624L*SectorLength;	 //  0x000100800
+	private long LBAStart3End    = 5860533134L*SectorLength; //  0x15D50A38E		
 	
 	public boolean isPrint = false;
 	
