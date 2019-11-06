@@ -1,6 +1,8 @@
 package desktop;
 
-import java.util.ArrayList;
+import java.util.ArrayList; 
+import org.apache.log4j.Logger;
+
 /*
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
@@ -8,18 +10,21 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 */
 import hdd.PhysicalDrive;
-import tools.FileTools;
-//import tools.LZJBjava;
-//import tools.VarTools; 
+import tools.FileTools;  
 
 public class ZSFMain { // extends JFrame {
 
-	@SuppressWarnings("unused")
-	private static final long serialVersionUID = 1L;
-	static String Ver 		= "0.0.1";
-	static String ZFSDrive	= "\\\\.\\PhysicalDrive1";
-	static String ZFSImage	= "K:\\zfs\\Images_zfsonline\\vdevs\\zol-0.6.1\\vdev0";
-	private static PhysicalDrive pd;
+	// TRACE, DEBUG, INFO, WARN, ERROR and FATAL
+	private static final Logger log = Logger.getLogger(ZSFMain.class.getName()); 
+	
+	static long serialVersionUID 	= 1L;
+	static int BestZfsLabel 		= 2;
+	static String Ver 				= "0.0.1";
+	static String ZFSDrive			= "\\\\.\\PhysicalDrive1";
+	static String ZFSImageDir		= "K:\\zfs\\";
+	static String ZFSImageDirTests 	= ZFSImageDir + "Images_zfsonline\\vdevs\\";
+	static String ZFSImage			= ZFSImageDirTests + "zol-0.6.1\\vdev0";
+	static PhysicalDrive pdDrv;
 
 	//final   String     ROOT  = "Корневая запись";
 	// Массив листьев деревьев
@@ -27,37 +32,47 @@ public class ZSFMain { // extends JFrame {
 	//final   String[][] leafs = new String[][]{{"1", "2"}, {"0", "1"}};	
 	
 	public static void main(String[] args) {	
-			
-		System.out.println("PhysicalDrive info Ver "+Ver+" \n");
 		
-		ArrayList<String> ss = FileTools.GetFilesFromDir(null, 
-				"K:\\zfs\\Images_zfsonline\\vdevs\\");
-		for (String s: ss) {
-			System.out.println(s);				
-			//pd = new PhysicalDrive(ZFSDrive);
-			//pd = new PhysicalDrive(ZFSImage, false);
-			pd = new PhysicalDrive(s, false);
-		}
+		log.info("PhysicalDrive info Ver "+Ver+" \n");
+		ZfsTestDDs(ZFSImageDirTests);
+		ZfsTestDrive(ZFSDrive);
 		if (args.length>0) { 
 			ZFSTools(args);
 		}
-		System.out.println("\nEnd.");				
+		log.info("End ZSFMain.");				
+	}
+
+	private static void ZfsTestDrive(String zFSDrive) {
+		 
+		pdDrv = new PhysicalDrive(ZFSDrive, true); 
+		pdDrv.LogFile=ZFSImageDir;
+	}
+
+	private static void ZfsTestDDs(String dir) {
+		
+		ArrayList<String> ss = FileTools.GetFilesFromDir(null,dir);
+		for (String s: ss) { 		 
+			PhysicalDrive pd = new PhysicalDrive(s, false);
+			pd.PrintZDB(); 
+		}		
 	}
 
 	private static void ZFSTools(String[] args) {
 
-		 if (args[0].equals("zdb")) { 
-			pd.zfs3.L[2].PrintZDB(args, ZFSDrive, true);  
+		if (args.length>1) {
+			if (args[0].equals("zdb"))  
+				if (args[1].equals("-l")) 
+					pdDrv.PrintZDB();   
 		} else 
-			PrintHelp(args);			
+			PrintHelp();			
 	}
 
-	private static void PrintHelp(String[] args) {
+	private static void PrintHelp() {
 		
-		System.out.println("Help to ZSFProject.\n");	
-		System.out.println("Run: ZSFProject <params>\n");	
-		System.out.println("Params (output is equal to zfs command):");	
-		System.out.println("zdb -l <device> - list ZFS label properties");			
+		log.info("Help to ZSFProject.\n");	
+		log.info("Run: ZSFProject <params>\n");	
+		log.info("Params (output is equal to zfs command):");	
+		log.info("zdb -l <device> - list ZFS label properties");			
 	}
 	/*
 	 private ZSFMain() {
@@ -99,3 +114,4 @@ public class ZSFMain { // extends JFrame {
 	
 		
 }
+

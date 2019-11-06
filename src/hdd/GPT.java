@@ -5,11 +5,15 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 
+import org.apache.log4j.Logger;
+
 import tools.FileTools;
 import tools.PrintTools;
 import tools.VarTools;
 
 public class GPT {
+	
+	private static final Logger log = Logger.getLogger(GPT.class.getName()); 
 
 	static int GPTStart     = 0; 
 	static int ProtectiveMBRStart     = 0;
@@ -45,11 +49,11 @@ public class GPT {
 	private boolean isDrive;
 	
 	public GPT() {
-		
+		log.trace("GPT");
 	}
 	public void Pack(String PhysicalDrivePath, boolean isDrive) {
 		
-		System.out.println((isDrive ? "PhysicalDrive GPT: " : "FileImage: ")+
+		log.info((isDrive ? "PhysicalDrive GPT: " : "FileImage: ")+
 				PhysicalDrivePath+"\n");	
 		this.isDrive = isDrive;
 		try {

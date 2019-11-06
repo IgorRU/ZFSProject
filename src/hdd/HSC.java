@@ -1,6 +1,10 @@
 package hdd;
 
+import org.apache.log4j.Logger;
+
 public class HSC {
+	
+	private static final Logger log = Logger.getLogger(HSC.class.getName()); 
 
 	public int Head = 0;
 	public int Sector = 0;
@@ -10,6 +14,7 @@ public class HSC {
 	
 	public HSC(byte b1, byte b2, byte b3, boolean isBegin) {
 
+		log.trace("HSC");
 		this.isBegin = isBegin;
 		Head     =  b1;
 		Sector   =  b2 & 0xFC ;

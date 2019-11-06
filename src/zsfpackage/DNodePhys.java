@@ -1,10 +1,14 @@
 package zsfpackage;
 
+import org.apache.log4j.Logger;
+
 import tools.FileTools;
 import tools.PrintTools;
 import tools.VarTools;
 
 public class DNodePhys {
+	
+	private static final Logger log = Logger.getLogger(DNodePhys.class.getName()); 
 
 	static int SectorLength = 512;
 	
@@ -24,7 +28,7 @@ public class DNodePhys {
 	public  long   dn_used;
 	private long   dn_pad2;
 	private byte[] dn_pad3;
-	public  DN_blkptr[] dn_blkptr = new DN_blkptr[3];
+	public  DNblkptr[] dn_blkptr = new DNblkptr[3];
 	public  ZFSChecksum  cksum  = new ZFSChecksum(); 
 	public  ZFSCompression compress = new ZFSCompression();
 	private long os_flag;
@@ -37,9 +41,9 @@ public class DNodePhys {
 	}
 	
 	public void Pack(byte[] bs, long offset, long size) {
-		
-		DMUadress = offset;		
-		//System.out.println("DNode: "); 		
+			
+		log.trace("DNode: ");
+		DMUadress = offset;	 		
 		PrintTools.Dump(bs, (int)offset, 0x40, false);
 		FileTools.WriteBlock(sDNodeFile, bs, SectorLength);
 		dn_type			= bs[0x00];	 // dmu_object_type_t		   	 0x0A = 10 - DMU_OT_DNODE
@@ -60,7 +64,7 @@ public class DNodePhys {
 		dn_used			= VarTools.ByteArray2Long1(bs,0x18,8); // 0x024000 bytes (or sectors) of disk space
 		dn_pad3			= VarTools.byteArray2byteArrayShort(bs,0x20, 8 * 4 ); // reserved
 		for (int i = 0 ; i<3; i++ ) 			
-			dn_blkptr[i] = new DN_blkptr();
+			dn_blkptr[i] = new DNblkptr();
 		int nn = 0x40;
 		dn_blkptr[0].Pack(bs, nn+0x000);	
 		System.out.println("\ndn_blkptr[0] "+ (dn_blkptr[0].isNull ? "fill null" : "fill no null."));	

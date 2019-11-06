@@ -10,9 +10,13 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeCellRenderer;
-import javax.swing.tree.TreePath; 
+import javax.swing.tree.TreePath;
+
+import org.apache.log4j.Logger; 
 
 public class ZFSTree extends JTree {
+	
+	private static final Logger log = Logger.getLogger(ZFSTree.class.getName()); 
 
 	private static final long serialVersionUID = 1L;
 	private DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
@@ -20,6 +24,7 @@ public class ZFSTree extends JTree {
 	public ZFSTree(DefaultTreeModel model) 
 	{
 		super(model);
+		log.info("ZFSTree");
 		// Слушатель мыши
 		addMouseListener(new MouseListener());
 		// Определение собственного отображающего объекта

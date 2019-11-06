@@ -1,8 +1,12 @@
 package hdd;
 
+import org.apache.log4j.Logger;
+
 import tools.VarTools;
 
 public class Partition {
+	
+	private static final Logger log = Logger.getLogger(Partition.class.getName()); 
 
 	private int Num;
 	private int offset;
@@ -17,6 +21,7 @@ public class Partition {
 
 	public Partition(byte[] b, int PartOffset, int nPart) {
 		
+		log.trace("Partition");
 		Num = nPart;
 		offset = PartOffset;
 	    byte n = b[offset+0x00]; // 80h Ч раздел €вл€етс€ активным, 00h Ч неактивным

@@ -5,28 +5,34 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 public class PrintTools {
+	
+	private static final Logger log = Logger.getLogger(PrintTools.class.getName()); 
 
 	   static public void Dump(byte[] bs, int start, boolean b) {
+		   
 		   Dump(bs, start, -1, b);
 	   }
 	   
 	   static public void Dump(byte[] bs, int start, int count, boolean isDump) {
 			if (!isDump)
 				return;
-		    System.out.println(" ");
+		    String sDump =""; 
 			if (count==-1)
 				count=bs.length;  
 		    for (int i=0; i<=count-1; i++) {
 		    	if (i==0)
-		    		System.out.print(String.format("%03X",start)+" ");
+		    		sDump=sDump+(String.format("%03X",start)+" ");
 		    	int j = i + start;
 		    	if ((i % 16 == 0)&&(i>0)) {
-		    		System.out.print("\n"+String.format("%03X",j)+" ");	 
+		    		log.info(sDump);
+		    		sDump=String.format("%03X",j)+" ";	 
 		    	}
-		    	System.out.print(String.format("%02X", bs[j])+" ");
+		    	sDump=sDump+(String.format("%02X", bs[j])+" ");
 		    } 
-		    System.out.println("");
+			log.info(sDump);
 	   }
 	   
 	  static public String GetHashMapKeyVlaue(HashMap<Integer, String> h, int n) {

@@ -5,9 +5,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import org.apache.log4j.Logger;
+
 import tools.PrintTools;
 
 public class ZFSObjsetType {
+	
+	private static final Logger log = Logger.getLogger(ZFSObjsetType.class.getName()); 
 	
 	private HashMap<Integer, String> hashObjsetType = new HashMap<>();
 	private HashMap<Integer, String> hashMapDescriptor = new HashMap<>();
@@ -23,7 +27,7 @@ public class ZFSObjsetType {
 	public void Pack(byte b) {
 		
 		Num=b;
-		//System.out.println("Compression is "+Num);
+		log.trace("Compression is "+Num);
 		InitHashMaps();
 		ObjsetType = GetCompressionName();
 		Descriptor = GetDescriptorName();

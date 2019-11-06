@@ -5,10 +5,14 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 
+import org.apache.log4j.Logger;
+
 import tools.PrintTools;
 import tools.VarTools;
 
 public class ZFSChecksum {
+	
+	private static final Logger log = Logger.getLogger(ZFSChecksum.class.getName()); 
 
 	public String Algorothm = "inherit";
 	public String Descriptor = "inherit";
@@ -24,7 +28,7 @@ public class ZFSChecksum {
 	public void Pack(byte b) {
 			
 		Num=b;
-		//System.out.println("Checksum is "+Num);
+		log.trace("Checksum is "+Num);
 		InitHashMaps();
 		Algorothm = GetAlgorothmName();
 		Descriptor = GetDescriptorName();

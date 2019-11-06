@@ -3,12 +3,17 @@ package tools;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 
+import org.apache.log4j.Logger;
+
 public class VarTools {
+	
+	private static final Logger log = Logger.getLogger(VarTools.class.getName()); 
 
 	static public byte[] StrToByteArray(String s) {
 		
 		//byte[] b = s.getBytes(Charset.forName("UTF-8"));
-		//byte[] b = s.getBytes(StandardCharsets.UTF_8); 		
+		//byte[] b = s.getBytes(StandardCharsets.UTF_8); 
+		log.trace("StrToByteArray "+s);
 		byte[] b = s.getBytes();
         return b;
 }	

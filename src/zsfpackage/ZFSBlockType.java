@@ -2,9 +2,13 @@ package zsfpackage;
 
 import java.util.HashMap;
 
+import org.apache.log4j.Logger;
+
 import tools.PrintTools;
 
 public class ZFSBlockType {
+	
+	private static final Logger log = Logger.getLogger(ZFSBlockType.class.getName()); 
 
 	private HashMap<Integer, String> hashMapType = new HashMap<>();
 	private HashMap<Integer, String> hashMapDescriptor = new HashMap<>();
@@ -20,6 +24,7 @@ public class ZFSBlockType {
 	public void Pack(byte b) {
 		
 		Num=b;
+		log.trace("ZFSBlockType = "+b);
 		InitHashMaps();
 		Type = GetBlockType();
 		Descriptor = GetDescriptorName();

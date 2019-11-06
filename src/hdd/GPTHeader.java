@@ -3,11 +3,15 @@ package hdd;
 import java.io.RandomAccessFile; 
 import java.nio.channels.FileChannel;
 
+import org.apache.log4j.Logger;
+
 import tools.FileTools;
 import tools.PrintTools;
 import tools.VarTools;
 
 public class GPTHeader {
+	
+	private static final Logger log = Logger.getLogger(GPTHeader.class.getName()); 
 
 	static  int  SectorLength = 512;
 	private int  GPTHeaderSize = SectorLength;	
@@ -27,6 +31,7 @@ public class GPTHeader {
 	
 	public GPTHeader(RandomAccessFile raf, FileChannel fc, int primaryGPTHeaderStart) {
 
+		log.trace("GPTHeader");
 		FileTools.SetOffset(fc,primaryGPTHeaderStart);
 		PrimaryGPTHeader=FileTools.GetBytes(raf, fc, SectorLength);		
 		GPTSignature = (new String(PrimaryGPTHeader)).substring(0, 8);

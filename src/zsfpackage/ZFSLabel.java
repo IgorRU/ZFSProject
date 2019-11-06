@@ -1,17 +1,18 @@
 package zsfpackage;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-/*
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-*/
+import org.apache.log4j.Logger;
 import tools.VarTools;
 
 public class ZFSLabel {
+	
+	private static final Logger log = Logger.getLogger(ZFSLabel.class.getName()); 
 
 	static int SectorLength = 512; 
 	public int ZFSLabelOffset;	 
@@ -37,12 +38,12 @@ public class ZFSLabel {
 	//static int  cBytesRead  = SectorLength * cSectors;
 	public  boolean isWrite2File = false;
 	public  String Write2FileName = "K:\\\\zfs\\";
-	private String ZFSLabel;
+	public String ZFSLabel;
 	private byte[] ZFSLabelData;
 	
 	final   String[] zdbKeys = new String[]  {"version", "name", "state", "txg", "pool_guid", 
 			"errata", "hostid", "hostname", "top_guid", "guid", "vdev_children"};
-	final   String[] zdbVdevKeys = new String[]  {"type", "id","guid","nparity", 
+	final   String[] zdbVdevKeys = new String[]  {"type", "id","guid", "path", "nparity", 
 				"metaslab_array","metaslab_shift","ashift","asize","is_log","create_txg"};
 	final   String[] zdbVdevChildKeys = new String[]  {"type", "id", "guid", "path",
 				"whole_disk", "DTL","create_txg"};
@@ -59,14 +60,15 @@ public class ZFSLabel {
 	
 	public void Pack(String sZFSLabel, byte[] bs, int offset) {
 		
+		log.trace("Pack");
 		ZFSLabel = sZFSLabel;
 		//ZFSLabelData = CheckWriteFile(bs,true);
 		ZFSLabelOffset = offset;
 		ZFSLabelData = bs;		
 		GetNameValue(ZFSLabelData);	
 		Ubers.Pack(ZFSLabelData); 
-		Ubers.Print(true);
-		PrintZDB(null, "", true);
+		Ubers.PrintActive(true);
+		PrintZDB(true);
 	}	
 	/*
 	private byte[] CheckWriteFile(byte[] bs, boolean isWrite) {
@@ -303,7 +305,7 @@ public class ZFSLabel {
 				System.out.println(prefix+s + ": " + z.get(s));				
 			else
 				if (s.length()>0)
-					System.out.println(prefix+s + ":");		
+					System.out.println(prefix+s + ":");		 
 	}
 
 	public void Print() {
@@ -312,12 +314,12 @@ public class ZFSLabel {
 				String.format("%08X",ZFSLabelOffset)+" or "+ZFSLabelOffset);
 	}
 
-	public void PrintZDB(String[] args, String zFSDrive, boolean b) {
+	public void PrintZDB(boolean b) {
 
 		if (!b)
 			return;
 		System.out.println("-----------------------------------------------");
-		System.out.println("LABEL "+ZFSLabel.substring(1));
+		System.out.println("LABEL " + ZFSLabel.substring(1));
 		System.out.println("-----------------------------------------------");
 		PrintKeys(zdbKeys, zdb, ""); 
 		System.out.println("vdev_tree:"); 
@@ -328,8 +330,22 @@ public class ZFSLabel {
 			PrintKeys(zdbVdevChildKeys, z, "\t\t"); 
 		}
 		PrintKeys(zdbKeys2, zdb, ""); 
-		PrintKeys(zdbVdevKeys2, zdbVdev, "\t");  
+		PrintKeys(zdbVdevKeys2, zdbVdev, "\t");  		
+	}
+	
+	public void PrintZDB2File(String sFile) {
 		
+		PrintStream ps = System.out; 
+		try {
+			File f = new File(sFile);
+			if (f.exists())
+				f.delete();
+			System.setOut(new PrintStream(sFile));
+			PrintZDB(true);
+		} catch (FileNotFoundException e) { 
+			e.printStackTrace();
+		}
+		System.setOut(ps);
 	}
 	
 }

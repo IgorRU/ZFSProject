@@ -10,9 +10,11 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
+import org.apache.log4j.Logger;
+
 public class FileTools {
 
-	static public boolean isDebug = true;
+	private static final Logger log = Logger.getLogger(FileTools.class.getName()); 
 	
 	static public ArrayList<String> GetFilesFromDir(ArrayList<String> ss, String dir) {
 		 
@@ -43,8 +45,7 @@ public class FileTools {
 		try {		        
 			fchanel.read(buf);
 		    pointer = f.getFilePointer();
-		    if (isDebug)
-		    	System.out.println("Read bytes: " + buf.position() +". Position = " + pointer);
+		    log.debug("Read bytes: " + buf.position() +". Position = " + pointer);
 		} catch (Exception e) {
 		    e.printStackTrace();
 		}
@@ -69,7 +70,7 @@ public class FileTools {
 			bOut[i]=bs[i];
 		try {
 			Files.write(f.toPath(), bOut);
-			System.out.println("Write  to "+sFileOut+" has "+ n+" bytes.");
+			log.info("Write  to "+sFileOut+" has "+ n+" bytes.");
 		} catch (IOException e) { 
 			e.printStackTrace();
 		}
@@ -84,7 +85,7 @@ public class FileTools {
 			} catch (IOException e) {
 				e.printStackTrace();
 			} 	       
-	        System.out.println("Deletion "+path+" successful."); 
+			log.info("Deletion "+path+" successful."); 
 		}		
 		
 		try (FileOutputStream stream = new FileOutputStream(path)) {
@@ -97,8 +98,7 @@ public class FileTools {
 	public static long GetFileSize(String sPath) {
 		
 		File f = new File(sPath);
-		return f.getUsableSpace();
-		
+		return f.getUsableSpace();		
 	}
 	
 }

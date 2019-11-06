@@ -1,9 +1,13 @@
 package zsfpackage;
 
+import org.apache.log4j.Logger;
+
 import tools.PrintTools;
 import tools.VarTools;
 
 public class ObjsetPhys {
+	
+	private static final Logger log = Logger.getLogger(ObjsetPhys.class.getName()); 
 
 	//public static int size = 512+192+8+8+512+512;
 	
@@ -18,6 +22,7 @@ public class ObjsetPhys {
 	
 	public ObjsetPhys() {
 		
+		log.trace("ObjsetPhys");
 	}
 	
 	public void Pack(byte[] bs, int offset, int len) {

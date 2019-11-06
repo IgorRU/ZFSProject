@@ -2,15 +2,20 @@ package hdd;
 
 import java.util.HashMap;
 
+import org.apache.log4j.Logger;
+
 import tools.PrintTools;
 
 public class PartitionType {
+	
+	private static final Logger log = Logger.getLogger(PartitionType.class.getName()); 
 	
 	public HashMap<Integer, String> hashMap     = new HashMap<>();
 	public HashMap<String,  String> hashMapGUID = new HashMap<>();
 	
 	public PartitionType() {
 	
+		log.trace("PartitionType");
 		hashMap.put(0x00, "Пустая запись (свободное место)");
 		hashMap.put(0x01, "FAT-12 (если это логический раздел или раздел расположен"+
 				" в первых 32 мегабайтах диска, иначе используется код 06h)");

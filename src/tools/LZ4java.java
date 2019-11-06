@@ -7,6 +7,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
+import org.apache.log4j.Logger;
+
 import net.jpountz.lz4.LZ4Compressor;
 import net.jpountz.lz4.LZ4Factory;
 import net.jpountz.lz4.LZ4FastDecompressor;
@@ -15,6 +17,8 @@ import net.jpountz.lz4.LZ4FrameOutputStream;
 import net.jpountz.lz4.LZ4SafeDecompressor;
 
 public class LZ4java {
+	
+	private static final Logger log = Logger.getLogger(LZ4java.class.getName()); 
 	
 	private static LZ4Factory factory 				 = LZ4Factory.fastestInstance();
 	private static LZ4Compressor compressor			 = factory.fastCompressor(); 
@@ -68,7 +72,7 @@ public class LZ4java {
 
 	public static byte[] lz4DecompressFileFromStream(String sFile, int len) {
 
-		System.out.println("Read file " + sFile + " to byte[].");
+		log.info("Read file " + sFile + " to byte[].");
 		byte[] restored = new byte[0];  
 		try {
 			File f = new File(sFile);
@@ -81,14 +85,14 @@ public class LZ4java {
 		} catch (IOException e) { 
 			e.printStackTrace();
 		}
-		System.out.println("Restored strint to size = " + restored.length);	
+		log.info("Restored strint to size = " + restored.length);	
 		return lz4DecompressSlow(restored);
 	}
 
 	public static void lz4CompressFile(String sFile, byte[] data) {
 		
 		LZ4FrameOutputStream outStream;
-		System.out.println("Compress byte[] to file " + sFile);
+		log.info("Compress byte[] to file " + sFile);
 		try {
 			File f = new File(sFile);
 			FileOutputStream fos = new FileOutputStream(f);
@@ -104,7 +108,7 @@ public class LZ4java {
 
 	public static byte[] lz4DecompressFile(String sFile, int decompressedLength) {
 
-		System.out.println("Decompress. File " + sFile);
+		log.info("Decompress. File " + sFile);
 		byte[] restored = new byte[decompressedLength];
 		LZ4FrameInputStream inStream;
 		try {
@@ -118,7 +122,7 @@ public class LZ4java {
 		} catch (IOException e) { 
 			e.printStackTrace();
 		}	
-		System.out.println("Restored. Size = " + restored.length);
+		log.info("Restored. Size = " + restored.length);
 		return restored;	
 	}	
 	

@@ -3,7 +3,11 @@ package zsfpackage;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import org.apache.log4j.Logger;
+
 public class ZFSUberBlocks {
+	
+	private static final Logger log = Logger.getLogger(ZFSUberBlocks.class.getName()); 
 
 	static int SectorLength = 512; 
 	static int cZFSUberArrayBegin  = 256*SectorLength;
@@ -23,6 +27,7 @@ public class ZFSUberBlocks {
 	
 	public ZFSUberBlocks() {
 		
+		log.trace("ZFSUberBlocks");
 	}
 	
 	public void Pack(byte[] bs) {
@@ -67,7 +72,7 @@ public class ZFSUberBlocks {
 		Collections.sort(txgs);
 	}
 	
-	public void Print(boolean isPrint) {
+	public void PrintActive(boolean isPrint) {
 
 		if (!isPrint)
 			return;

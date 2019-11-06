@@ -2,9 +2,13 @@ package zsfpackage;
 
 import java.util.HashMap;
 
+import org.apache.log4j.Logger;
+
 import tools.PrintTools;
 
 public class ZMSObjsetType {
+	
+	private static final Logger log = Logger.getLogger(ZMSObjsetType.class.getName()); 
  
 	private HashMap<Integer, String> hashMapDescriptor = new HashMap<>();
 	 
@@ -18,7 +22,7 @@ public class ZMSObjsetType {
 	public void Pack(byte b) {
 		
 		Num=b;
-		//System.out.println("Compression is "+Num);
+		log.trace("Compression is "+Num);
 		InitHashMaps();
 		Descriptor = GetDescriptorName();
 	}

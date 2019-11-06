@@ -1,9 +1,13 @@
 package zsfpackage;
 
+import org.apache.log4j.Logger;
+
 import tools.PrintTools;
 import tools.VarTools;
 
-public class DN_blkptr {
+public class DNblkptr {
+	
+	private static final Logger log = Logger.getLogger(DNblkptr.class.getName()); 
 
 	public int[]  vdev 		= new int[3];
 	public byte[] grid 		= new byte[3];
@@ -27,13 +31,13 @@ public class DN_blkptr {
 	private int nu;
     public boolean isNull = true;
 
-	public DN_blkptr() {
+	public DNblkptr() {
 		
 	}
 	
 	public void Pack(byte[] bs, int DN_offset) {
 		
-		System.out.print("DN_blkptr:");
+		log.trace("DN_blkptr:");
 		//PrintTools.Dump(bs, DN_offset, 128, true);
 		if (VarTools.CheckNull(bs,DN_offset,128))
 			return;
@@ -76,55 +80,52 @@ public class DN_blkptr {
 	
 	public void Print(boolean isPrint) {
 		 
-		if (!isPrint)
+		if (!isPrint||isNull)
 			return;
-		if (isNull)
-			return;
-		System.out.println("\nblkptr_t offset = 0x" + String.format("%08X",nu));
+		log.info("\nblkptr_t offset = 0x" + String.format("%08X",nu));
 		for (int i = 0; i<3; i++) {
 			int nu0 = i*16;
-			System.out.println("DVA " + i+"            "+String.format("%08X: ",nu+nu0+0x00));
-			System.out.println("---vdev1 = 0x" +  String.format("%04X",vdev[i]));
-	        System.out.println("---grid = 0x" +  String.format("%02X",grid[1]));
-	        System.out.println("---asize (Allocated block size) = 0x" +  
+			log.info("DVA " + i+"            "+String.format("%08X: ",nu+nu0+0x00));
+			log.info("---vdev1 = 0x" +  String.format("%04X",vdev[i]));
+			log.info("---grid = 0x" +  String.format("%02X",grid[1]));
+			log.info("---asize (Allocated block size) = 0x" +  
 	        		String.format("%02X",asize[i]));
-	        System.out.println("---G = 0x" +  String.format("%01X",G[i]) + 
+			log.info("---G = 0x" +  String.format("%01X",G[i]) + 
 	        		(G[i] == -128 ? ". Gang block" : ". Non gang block"));
-	        System.out.println("---offset = 0x" +  String.format("%08X",offset[i])+" or "+
+			log.info("---offset = 0x" +  String.format("%08X",offset[i])+" or "+
 	        		offset[i]);
-	        System.out.println("---address = 0x" +  String.format("%08X",address[i])+" or "+
+			log.info("---address = 0x" +  String.format("%08X",address[i])+" or "+
 	        		address[i]);
-	        System.out.println("---end = 0x" +  String.format("%04X",nu0+0x10));	        
+			log.info("---end = 0x" +  String.format("%04X",nu0+0x10));	        
 		}
-        System.out.println(String.format("%08X: ",nu+0x30)+
+		log.info(String.format("%08X: ",nu+0x30)+
         		"Elong = 0x" +  String.format("%016X",Elong));
-        System.out.println(String.format("%08X: ",nu+0x30)+ "E = " + E);
-        System.out.println(String.format("%08X: ",nu+0x30)+ "lvl = " + lvl);
-        if (lvl!=7)
-        	System.out.println("lvl ="+lvl);
-        System.out.println(String.format("%08X: ",nu+0x30)+ "btype is " + 
+		log.info(String.format("%08X: ",nu+0x30)+ "E = " + E);
+		log.info(String.format("%08X: ",nu+0x30)+ "lvl = " + lvl);
+		log.info("lvl ="+lvl);
+		log.info(String.format("%08X: ",nu+0x30)+ "btype is " + 
         		btype.Descriptor + " (" +btype.Type + ") or = "+btype.Num); 
         if (btype.Num!=0)
-        	System.out.println("btype.Num ="+btype.Num);
-        System.out.println(String.format("%08X: ",nu+0x32)+ "cksum = " + cksum.Num +
+        	log.info("btype.Num ="+btype.Num);
+        log.info(String.format("%08X: ",nu+0x32)+ "cksum = " + cksum.Num +
         		". "+cksum.Descriptor+" or "+ cksum.Algorothm);  
         if (cksum.Num!=7)
-        	System.out.println("cksum.Num ="+cksum.Num);
-        System.out.println(String.format("%08X: ",nu+0x33)+ "comp = " + compress.Num +
+        	log.info("cksum.Num ="+cksum.Num);
+        log.info(String.format("%08X: ",nu+0x33)+ "comp = " + compress.Num +
         		". "+compress.Descriptor+" or "+ compress.Algorithm);
-        System.out.println(String.format("%08X: ",nu+0x34)+"psize (Phisical block size) = " + 
+        log.info(String.format("%08X: ",nu+0x34)+"psize (Phisical block size) = " + 
         		psize + " or 0x" + String.format("%02X",psize));
-        System.out.println(String.format("%08X: ",nu+0x36)+"lsize (Logical block size) = " + 
+        log.info(String.format("%08X: ",nu+0x36)+"lsize (Logical block size) = " + 
         		lsize +" 0x" + String.format("%02X",lsize));   
-        System.out.println(String.format("%08X: ",nu+0x48)+
+        log.info(String.format("%08X: ",nu+0x48)+
         		"Birth TXG (phisical) = 0x"  +  String.format("%016X",txgPhisical));
-        System.out.println(String.format("%08X: ",nu+0x50)+
+        log.info(String.format("%08X: ",nu+0x50)+
         		"Birth TXG (logic) = 0x"  +  String.format("%016X",txgLogic));
-        System.out.println(String.format("%08X: ",nu+0x58)+
+        log.info(String.format("%08X: ",nu+0x58)+
         		"fill count = 0x" +  String.format("%016X",fillCount)); 
-        System.out.println(String.format("%08X: ",nu+0x60)+"Checksum:");
+        log.info(String.format("%08X: ",nu+0x60)+"Checksum:");
         PrintTools.Dump(checksum,0,0x20,true);	
-		System.out.println("blkptr_t end = 0x" + String.format("%08X",nu+128)+"\n"); 
+        log.info("blkptr_t end = 0x" + String.format("%08X",nu+128)+"\n"); 
 	}
 	
 }

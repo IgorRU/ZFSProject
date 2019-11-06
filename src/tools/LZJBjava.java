@@ -1,6 +1,10 @@
 package tools;
 
+import org.apache.log4j.Logger;
+
 public class LZJBjava {
+	
+	private static final Logger log = Logger.getLogger(LZJBjava.class.getName()); 
 
 	private static final int TABLE_SIZE  = 256;
 	private static final int MATCH_BITS  = 6;
@@ -141,10 +145,10 @@ public class LZJBjava {
 				"666666666666666666666666666666666666666666666666666666666666" + 
 				"66666666666666666666666999990000000000888889999900000";	
 		String out = LZJBjava.compress(s); 
-		System.out.println(out);	
-		System.out.println(VarTools.bytesToHex(out.getBytes()));		
+		log.info(out);	
+		log.info(VarTools.bytesToHex(out.getBytes()));		
 		String s2 = LZJBjava.decompress(out);
-		System.out.println("Source size is "+s.length()+"-> target"+out.length()+" "+
+		log.info("Source size is "+s.length()+"-> target"+out.length()+" "+
 				(s.equals(s2) ? "Ok!" : "Bad"));		
 	}
 }

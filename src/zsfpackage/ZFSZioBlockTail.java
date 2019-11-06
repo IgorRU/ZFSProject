@@ -1,9 +1,12 @@
 package zsfpackage;
 
+import org.apache.log4j.Logger;
+
 import tools.PrintTools;
 import tools.VarTools;
 
 public class ZFSZioBlockTail {
+	private static final Logger log = Logger.getLogger(ZFSZioBlockTail.class.getName()); 
 	
 	public  long ZBT_MAGIC = 0x210da7ab10c7a11L; // 
 	public  long zbt_magic;
@@ -17,6 +20,7 @@ public class ZFSZioBlockTail {
 
 	public void Pack(byte[] bs, int offset) {
 
+		log.trace("Pack");
 		nu = (int)offset;
 		zbt_magic = VarTools.ByteArray2Long1(bs,nu+0x00,8); 
 		isMagic = (ZBT_MAGIC == zbt_magic);

@@ -3,13 +3,18 @@ package zsfpackage;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.log4j.Logger;
+
 import tools.PrintTools;
 import tools.VarTools;
 
 public class ZFSUberBlock {
 	
+	private static final Logger log = Logger.getLogger(ZFSUberBlock.class.getName()); 
+	
 	public Date ZFSLabelDate;
-	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd 'at' HH:mm:ss z");	
+	private SimpleDateFormat dateFormat = 
+			new SimpleDateFormat("yyyy.MM.dd 'at' HH:mm:ss z");	
 	
 	public int nu;
 	public long UberOffsetAbs;
@@ -23,10 +28,11 @@ public class ZFSUberBlock {
 	public String ub_guid_sum; 
 	
 	private boolean isPrintDump = false;	
-	public DN_blkptr dn_blkptr = new DN_blkptr();
+	public DNblkptr dn_blkptr = new DNblkptr();
 
 	public ZFSUberBlock(byte[] bs, int UberOffset, int nUber) {
 		
+		log.trace("ZFSUberBlock");
 		nUberBlock = nUber;
 		boolean isPrint = false; // (nUberBlock==104); 
 		if (isPrint)
@@ -48,7 +54,7 @@ public class ZFSUberBlock {
 		ub_guid_sum = VarTools.ByteArray2HexsStr(bs,nu+0x18,8);
 		long dl = VarTools.ByteArray2Long1(bs, nu+0x20, 8)*1000;  
         ZFSLabelDate = new Date(dl); 
-        dn_blkptr = new DN_blkptr();  
+        dn_blkptr = new DNblkptr();  
         dn_blkptr.Pack(bs,nu + 0x28);    
 		isMagic = true;
 		Print(isPrintDump); 

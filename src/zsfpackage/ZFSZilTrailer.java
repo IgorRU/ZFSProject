@@ -1,18 +1,22 @@
 package zsfpackage;
 
+import org.apache.log4j.Logger;
+
 import tools.PrintTools;
 import tools.VarTools; 
 
 public class ZFSZilTrailer {
+	
+	private static final Logger log = Logger.getLogger(ZFSZilTrailer.class.getName()); 
 
 		public int nu; 
-		public DN_blkptr zit_next_blk = new DN_blkptr(); 
+		public DNblkptr zit_next_blk = new DNblkptr(); 
 		private long zit_pad;
 		private long zit_nused;
 		ZFSZioBlockTail zit_bt = new ZFSZioBlockTail();
 
 		public ZFSZilTrailer() {
-			
+			log.trace("ZFSZilTrailer");
 		}
 		
 		public void Pack(byte[] bs, int ZIL_offset, int len) {

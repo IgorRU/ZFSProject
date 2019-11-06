@@ -3,11 +3,16 @@ package zsfpackage;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import org.apache.log4j.Logger;
+
 import java.util.Set;
 
 import tools.PrintTools;
 
 public class ZFSCompression   {
+	
+	private static final Logger log = Logger.getLogger(ZFSCompression.class.getName()); 
 
 	private HashMap<Integer, String> hashMapCompression = new HashMap<>();
 	private HashMap<Integer, String> hashMapDescriptor  = new HashMap<>();
@@ -23,7 +28,7 @@ public class ZFSCompression   {
 	public void Pack(byte b) {
 		
 		Num=b;
-		//System.out.println("Compression is "+Num);
+		log.trace("Compression is "+Num);
 		InitHashMaps();
 		Algorithm = GetCompressionName();
 		Descriptor = GetDescriptorName();

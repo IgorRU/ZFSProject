@@ -1,9 +1,13 @@
 package zsfpackage;
 
+import org.apache.log4j.Logger;
+
 import tools.PrintTools;
 import tools.VarTools;
 
 public class ZFSlr {
+	
+	private static final Logger log = Logger.getLogger(ZFSlr.class.getName()); 
 
 	private long lrc_txtype;
 	private long lrc_reclen;
@@ -13,6 +17,7 @@ public class ZFSlr {
 	
 	public ZFSlr() {
 		
+		log.trace("ZFSlr");
 	}
 	
 	public void Pack(byte[] bs, int offset, int len) {

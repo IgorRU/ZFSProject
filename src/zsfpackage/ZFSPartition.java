@@ -1,8 +1,12 @@
 package zsfpackage;
 
+import org.apache.log4j.Logger;
+
 import tools.PrintTools;
 
 public class ZFSPartition {
+	
+	private static final Logger log = Logger.getLogger(ZFSPartition.class.getName()); 
 
 	static int  SectorLength = 512; 
 	public long ZFSPartitionStart   = -1;  // 1050624   
@@ -23,6 +27,7 @@ public class ZFSPartition {
 	
 	public ZFSPartition() {
 		
+		log.info("ZFSPartition");
 	}
 		
 	public void Pack(long LBAStart, long LBAEnd, byte[] bs) {
@@ -44,10 +49,10 @@ public class ZFSPartition {
 	public void Print() {
 
 		System.out.println("\nZFS Partition");
-		System.out.println("Start LBA = 0x"+ 
-				String.format("%08X",ZFSPartitionStart)+" or "+ ZFSPartitionStart/SectorLength+" sectors");
-		System.out.println("End   LBA = 0x"+ 
-				String.format("%08X",ZFSPartitionEnd)+" or "+ ZFSPartitionEnd/SectorLength);
+		System.out.println("Start LBA = 0x" + String.format("%010X",ZFSPartitionStart) + 
+				" or " + ZFSPartitionStart/SectorLength + " sectors");
+		System.out.println("End   LBA = 0x" + String.format("%010X",ZFSPartitionEnd) + 
+				" or " + ZFSPartitionEnd/SectorLength + " sectors");
 		ZFSSize = ZFSPartitionEnd-ZFSPartitionStart;
 		System.out.println("Size = 0x"+ String.format("%08X",ZFSSize)+" or "+ 
 				ZFSSize/512+" sectors or "+ (ZFSSize/1024/1024/1024)+" Gb");
