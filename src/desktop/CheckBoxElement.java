@@ -3,15 +3,15 @@ package desktop;
 import org.apache.log4j.Logger;
 
 /**
- * Класс определения параметров элемента узла дерева 
+ * РљР»Р°СЃСЃ РѕРїСЂРµРґРµР»РµРЅРёСЏ РїР°СЂР°РјРµС‚СЂРѕРІ СЌР»РµРјРµРЅС‚Р° СѓР·Р»Р° РґРµСЂРµРІР° 
  */
 public class CheckBoxElement {
 	
 	private static final Logger log = Logger.getLogger(CheckBoxElement.class.getName()); 
-	// Данные узла
+	// Р”Р°РЅРЅС‹Рµ СѓР·Р»Р°
 	public boolean selected;
 	public String  text;
-	// Конструктор
+	// РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ
 	public CheckBoxElement(boolean selected, String text)
 	{
 		log.info("CheckBoxElement");

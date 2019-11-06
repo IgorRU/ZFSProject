@@ -25,10 +25,10 @@ public class HSC {
 
 	public void Print() { 
 
-		System.out.println((isBegin ? "Начало раздела:" : "Конец раздела:")); 
+		System.out.println((isBegin ? "РќР°С‡Р°Р»Рѕ СЂР°Р·РґРµР»Р°:" : "РљРѕРЅРµС† СЂР°Р·РґРµР»Р°:")); 
 		System.out.println("Hex   (HSC) = " + HSCBytes); 	
-		System.out.println("Головка (H) = " + Head); 	
-		System.out.println("Сектор  (S) = " + Sector);  	
-		System.out.println("Цилиндр (С) = " + Cilinder);  		
+		System.out.println("Р“РѕР»РѕРІРєР° (H) = " + Head); 	
+		System.out.println("РЎРµРєС‚РѕСЂ  (S) = " + Sector);  	
+		System.out.println("Р¦РёР»РёРЅРґСЂ (РЎ) = " + Cilinder);  		
 	}
 }

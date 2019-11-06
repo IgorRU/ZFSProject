@@ -30,11 +30,11 @@ public class ZFSLabel {
 	static int  cZFSUberArrayEnd    = 512*SectorLength;  
 	static int  cZFSLabelSize       = 256*1024;  		// 256 kb
 	static int  cZFSUberBlockSize   = 2*SectorLength;   //  
-	// начало чтения (байт)     
+	// РЅР°С‡Р°Р»Рѕ С‡С‚РµРЅРёСЏ (Р±Р°Р№С‚)     
 	//public long  cSecStart  = SecStartZFS + cZFSUberArrayBegin;
 	//public long  cBytesStart = SectorLength * cSecStart;
-	 // прочитать сектров
-	//static int  cSectors    = cZFSUberblockSize;  // размер L0,L1,L2,L3
+	 // РїСЂРѕС‡РёС‚Р°С‚СЊ СЃРµРєС‚СЂРѕРІ
+	//static int  cSectors    = cZFSUberblockSize;  // СЂР°Р·РјРµСЂ L0,L1,L2,L3
 	//static int  cBytesRead  = SectorLength * cSectors;
 	public  boolean isWrite2File = false;
 	public  String Write2FileName = "K:\\\\zfs\\";

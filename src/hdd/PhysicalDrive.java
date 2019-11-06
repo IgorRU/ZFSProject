@@ -45,7 +45,7 @@ public class PhysicalDrive {
 		LogFile = PhysicalDrivePath;
 		gptpd.Pack(PhysicalDrivePath, isDrive);	 
 		gptpd.Print(true);
-		// Работа с разделом #3 (zfs)		
+		// Р Р°Р±РѕС‚Р° СЃ СЂР°Р·РґРµР»РѕРј #3 (zfs)		
 		ZFSStart = (isDrive ? LBAStart3Offset : 0);		 
 		ZFSEnd   = (isDrive ? LBAStart3End    : FileTools.GetFileSize(path));
 		FileTools.SetOffset(gptpd.fc, ZFSStart);
@@ -56,7 +56,7 @@ public class PhysicalDrive {
 
 	public void ViewActiveBlock() {
 		
-		log.info("=== Вывод активного блока ZFSUberBlock");		
+		log.info("=== Р’С‹РІРѕРґ Р°РєС‚РёРІРЅРѕРіРѕ Р±Р»РѕРєР° ZFSUberBlock");		
 		ZFSLabel L = zfs3.L[LabelBest];
 		int n = L.Ubers.nActiveUber;
 		System.out.println("zfs3.L["+LabelBest+"].nActiveUber: " + n );
@@ -74,7 +74,7 @@ public class PhysicalDrive {
 	}
 	
 	private void GetMOS(ZFSUberBlock u) {
-		System.out.println("=== получение MOS ==========================================");	
+		System.out.println("=== РїРѕР»СѓС‡РµРЅРёРµ MOS ==========================================");	
 		DNblkptr b = u.dn_blkptr;	
 		PrintTools.Print10andHex("Elong", "%08X",b.Elong);
 		PrintTools.Print10andHex("ElongN","%08X",b.ElongN);
@@ -85,7 +85,7 @@ public class PhysicalDrive {
 			long adr = ZFSStart + b.address[i];
 			PrintTools.Print10andHex("addr["+i+"]","%08X",adr);	    
 			FileTools.SetOffset(gptpd.fc,adr);
-			//int sectors = b.psize+1; - в диске
+			//int sectors = b.psize+1; - РІ РґРёСЃРєРµ
 			int sectors = b.lsize+1;
 			byte[] bbb = FileTools.GetBytes(gptpd.raf,gptpd.fc, sectors*SectorLength); // 4k = MOS size
 			FileTools.WriteBlock("k:/zfs/Blocks/"+String.format("%020X",adr)+"_"+b.txgLogic+".dat", bbb, sectors*SectorLength);

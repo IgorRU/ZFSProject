@@ -24,7 +24,7 @@ public class Partition {
 		log.trace("Partition");
 		Num = nPart;
 		offset = PartOffset;
-	    byte n = b[offset+0x00]; // 80h — раздел является активным, 00h — неактивным
+	    byte n = b[offset+0x00]; // 80h вЂ” СЂР°Р·РґРµР» СЏРІР»СЏРµС‚СЃСЏ Р°РєС‚РёРІРЅС‹Рј, 00h вЂ” РЅРµР°РєС‚РёРІРЅС‹Рј
 	    isActive = (n==-1);
 	    isFree   = (b[offset+0x04]==0);
 	    HSCStart = new HSC(b[offset+0x01],b[offset+0x02],b[offset+0x03],true); 
@@ -38,12 +38,12 @@ public class Partition {
 	public void Print() {
 
 	    System.out.println("Partition "+Num+":");
-		System.out.println("Активность раздела  = "+ (isActive ? "да" : "нет")); 
-	    System.out.println((isFree ? "Свободное место" : "Раздел данных."));
+		System.out.println("РђРєС‚РёРІРЅРѕСЃС‚СЊ СЂР°Р·РґРµР»Р°  = "+ (isActive ? "РґР°" : "РЅРµС‚")); 
+	    System.out.println((isFree ? "РЎРІРѕР±РѕРґРЅРѕРµ РјРµСЃС‚Рѕ" : "Р Р°Р·РґРµР» РґР°РЅРЅС‹С…."));
 	    HSCStart.Print();
 	    HSCEnd.Print();
-		System.out.println("Смещение первого сектора = 0x" + Offset1Sector); 		
-		System.out.println("Количество секторов раздела = 0x" + SectorCount); 	
-		System.out.println("Код типа раздела = "+PartName+" (0x"+String.format("%02X", PartNum)+")"); 
+		System.out.println("РЎРјРµС‰РµРЅРёРµ РїРµСЂРІРѕРіРѕ СЃРµРєС‚РѕСЂР° = 0x" + Offset1Sector); 		
+		System.out.println("РљРѕР»РёС‡РµСЃС‚РІРѕ СЃРµРєС‚РѕСЂРѕРІ СЂР°Р·РґРµР»Р° = 0x" + SectorCount); 	
+		System.out.println("РљРѕРґ С‚РёРїР° СЂР°Р·РґРµР»Р° = "+PartName+" (0x"+String.format("%02X", PartNum)+")"); 
 	}	
 }

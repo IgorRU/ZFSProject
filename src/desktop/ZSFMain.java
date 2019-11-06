@@ -26,9 +26,9 @@ public class ZSFMain { // extends JFrame {
 	static String ZFSImage			= ZFSImageDirTests + "zol-0.6.1\\vdev0";
 	static PhysicalDrive pdDrv;
 
-	//final   String     ROOT  = "Корневая запись";
-	// Массив листьев деревьев
-	//final   String[]   nodes = new String[]  {"Транзакции (TXG)", "ZFS label"};
+	//final   String     ROOT  = "РљРѕСЂРЅРµРІР°СЏ Р·Р°РїРёСЃСЊ";
+	// РњР°СЃСЃРёРІ Р»РёСЃС‚СЊРµРІ РґРµСЂРµРІСЊРµРІ
+	//final   String[]   nodes = new String[]  {"РўСЂР°РЅР·Р°РєС†РёРё (TXG)", "ZFS label"};
 	//final   String[][] leafs = new String[][]{{"1", "2"}, {"0", "1"}};	
 	
 	public static void main(String[] args) {	
@@ -80,13 +80,13 @@ public class ZSFMain { // extends JFrame {
 		super("ZFS viewer "+ZFSDrive);
 		System.out.println("ZSFMain start");	
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		// Создание модели дерева
+		// РЎРѕР·РґР°РЅРёРµ РјРѕРґРµР»Рё РґРµСЂРµРІР°
 		DefaultTreeModel model = createZFSModel();
-		// Создание дерева
+		// РЎРѕР·РґР°РЅРёРµ РґРµСЂРµРІР°
 		ZFSTree tree = new ZFSTree(model);
-		// Размещение дерева в интерфейсе
+		// Р Р°Р·РјРµС‰РµРЅРёРµ РґРµСЂРµРІР° РІ РёРЅС‚РµСЂС„РµР№СЃРµ
 		getContentPane().add(new JScrollPane(tree));
-		// Вывод окна на экран
+		// Р’С‹РІРѕРґ РѕРєРЅР° РЅР° СЌРєСЂР°РЅ
 		setSize(800, 600);
 		setVisible(true);		
 		System.out.println("ZSFMain end");
@@ -94,20 +94,20 @@ public class ZSFMain { // extends JFrame {
 	
 	private DefaultTreeModel createZFSModel() {
 		System.out.println("createZFSModel ");	
-		// Корневой узел дерева
+		// РљРѕСЂРЅРµРІРѕР№ СѓР·РµР» РґРµСЂРµРІР°
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode(ROOT);
-		// Добавление ветвей - потомков 1-го уровня
+		// Р”РѕР±Р°РІР»РµРЅРёРµ РІРµС‚РІРµР№ - РїРѕС‚РѕРјРєРѕРІ 1-РіРѕ СѓСЂРѕРІРЅСЏ
 		DefaultMutableTreeNode drink = new DefaultMutableTreeNode(nodes[0]);
 		DefaultMutableTreeNode sweet = new DefaultMutableTreeNode(nodes[1]);
-		// Добавление ветвей к корневой записи
+		// Р”РѕР±Р°РІР»РµРЅРёРµ РІРµС‚РІРµР№ Рє РєРѕСЂРЅРµРІРѕР№ Р·Р°РїРёСЃРё
 		root.add(drink);
 		root.add(sweet);
-		// Добавление листьев - потомков 2-го уровня
+		// Р”РѕР±Р°РІР»РµРЅРёРµ Р»РёСЃС‚СЊРµРІ - РїРѕС‚РѕРјРєРѕРІ 2-РіРѕ СѓСЂРѕРІРЅСЏ
 		for ( int i = 0; i < leafs[0].length; i++)
 			drink.add(new DefaultMutableTreeNode(new CheckBoxElement(false, leafs[0][i])));
 		for ( int i = 0; i < leafs[1].length; i++)
 			sweet.add(new DefaultMutableTreeNode(new CheckBoxElement(false, leafs[1][i])));
-		// Создание стандартной модели
+		// РЎРѕР·РґР°РЅРёРµ СЃС‚Р°РЅРґР°СЂС‚РЅРѕР№ РјРѕРґРµР»Рё
 		return new DefaultTreeModel(root);
 	}
 	 */

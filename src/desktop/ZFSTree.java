@@ -25,54 +25,54 @@ public class ZFSTree extends JTree {
 	{
 		super(model);
 		log.info("ZFSTree");
-		// Слушатель мыши
+		// РЎР»СѓС€Р°С‚РµР»СЊ РјС‹С€Рё
 		addMouseListener(new MouseListener());
-		// Определение собственного отображающего объекта
+		// РћРїСЂРµРґРµР»РµРЅРёРµ СЃРѕР±СЃС‚РІРµРЅРЅРѕРіРѕ РѕС‚РѕР±СЂР°Р¶Р°СЋС‰РµРіРѕ РѕР±СЉРµРєС‚Р°
 		setCellRenderer(new CheckBoxRenderer());
 	}
-	// Объект отображения узлов дерева с использованием флажков
+	// РћР±СЉРµРєС‚ РѕС‚РѕР±СЂР°Р¶РµРЅРёСЏ СѓР·Р»РѕРІ РґРµСЂРµРІР° СЃ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРµРј С„Р»Р°Р¶РєРѕРІ
 	class CheckBoxRenderer extends JCheckBox implements TreeCellRenderer
 	{
 		private static final long serialVersionUID = 1L;
 		public CheckBoxRenderer() {
-			// Флажок будет прозрачным
+			// Р¤Р»Р°Р¶РѕРє Р±СѓРґРµС‚ РїСЂРѕР·СЂР°С‡РЅС‹Рј
 			setOpaque(false);
 		}
-		// Метод получения компонента узла
+		// РњРµС‚РѕРґ РїРѕР»СѓС‡РµРЅРёСЏ РєРѕРјРїРѕРЅРµРЅС‚Р° СѓР·Р»Р°
 		public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected,
 			                          boolean expanded, boolean leaf, int row, boolean hasFocus)
 		{
-			// Проверка принадлежности узла к стандартной модели
+			// РџСЂРѕРІРµСЂРєР° РїСЂРёРЅР°РґР»РµР¶РЅРѕСЃС‚Рё СѓР·Р»Р° Рє СЃС‚Р°РЅРґР°СЂС‚РЅРѕР№ РјРѕРґРµР»Рё
 			if (!(value instanceof DefaultMutableTreeNode)) {
-				// Если нет, то используется стандартный объект
+				// Р•СЃР»Рё РЅРµС‚, С‚Рѕ РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ СЃС‚Р°РЅРґР°СЂС‚РЅС‹Р№ РѕР±СЉРµРєС‚
 				return renderer.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
 			}
 			Object data = ((DefaultMutableTreeNode)value).getUserObject();
-			// Проверка, являются ли данные CheckBoxElement
+			// РџСЂРѕРІРµСЂРєР°, СЏРІР»СЏСЋС‚СЃСЏ Р»Рё РґР°РЅРЅС‹Рµ CheckBoxElement
 			if (data instanceof CheckBoxElement ) {
 				CheckBoxElement element = (CheckBoxElement)data;
-				// Настройка флажка и текста
+				// РќР°СЃС‚СЂРѕР№РєР° С„Р»Р°Р¶РєР° Рё С‚РµРєСЃС‚Р°
 				setSelected(element.selected);
 				setText(element.text);
 				return this;
 			}
-			// В противном случае метод возвращает стандартный объект
+			// Р’ РїСЂРѕС‚РёРІРЅРѕРј СЃР»СѓС‡Р°Рµ РјРµС‚РѕРґ РІРѕР·РІСЂР°С‰Р°РµС‚ СЃС‚Р°РЅРґР°СЂС‚РЅС‹Р№ РѕР±СЉРµРєС‚
 			return renderer.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
 		}
 	}
-	// Слушатель событий мыши
+	// РЎР»СѓС€Р°С‚РµР»СЊ СЃРѕР±С‹С‚РёР№ РјС‹С€Рё
 	class MouseListener extends MouseAdapter
 	{
 		public void mousePressed(MouseEvent e)
 		{
-			// Путь к узлу
+			// РџСѓС‚СЊ Рє СѓР·Р»Сѓ
 			TreePath path = getClosestPathForLocation(e.getX(), e.getY());
 			if (path == null) 
 				return;
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode)path.getLastPathComponent();
-			// Проверка принадлежности узла к стандартной модели
+			// РџСЂРѕРІРµСЂРєР° РїСЂРёРЅР°РґР»РµР¶РЅРѕСЃС‚Рё СѓР·Р»Р° Рє СЃС‚Р°РЅРґР°СЂС‚РЅРѕР№ РјРѕРґРµР»Рё
 			if (node.getUserObject() instanceof CheckBoxElement) {
-				// Изменение состояния флажка
+				// РР·РјРµРЅРµРЅРёРµ СЃРѕСЃС‚РѕСЏРЅРёСЏ С„Р»Р°Р¶РєР°
 				CheckBoxElement element = (CheckBoxElement)node.getUserObject();
 				element.selected = ! element.selected;
 				repaint();
