@@ -63,6 +63,7 @@ public class FileTools {
 
 	public static byte[] WriteBlock(String sFileOut, byte[] bs, int nBytes) {
 		
+		log.debug("WriteBlock path = " +  sFileOut);
 		int n = nBytes;
 		byte[] bOut = new byte[n];
 		File f = new File(sFileOut); 
@@ -99,6 +100,20 @@ public class FileTools {
 		
 		File f = new File(sPath);
 		return f.getUsableSpace();		
+	}
+
+	public static String GetBlockDir(String path) {
+		
+		log.debug("VDEV path = " + path);
+		File f = new File(path);		
+		String sDir = f.getParent();
+		File Dir = new File(f.getParent());
+		if(!Dir.exists()){
+			Dir.mkdir();
+			log.debug("Make dir = " + Dir.getAbsolutePath());			
+		}
+		log.debug("Block dir = " + sDir);
+		return sDir + "/";
 	}
 	
 }

@@ -12,13 +12,14 @@ import javax.swing.tree.DefaultTreeModel;
 import hdd.PhysicalDrive;
 import tools.FileTools;  
 
-public class ZSFMain { // extends JFrame {
+public class ZSFMain {
 
 	// TRACE, DEBUG, INFO, WARN, ERROR and FATAL
 	private static final Logger log = Logger.getLogger(ZSFMain.class.getName()); 
 	
-	static long serialVersionUID 	= 1L;
-	static int BestZfsLabel 		= 2;
+	static long   serialVersionUID 	= 1L;
+	
+	static int 	  BestZfsLabel 		= 2;
 	static String Ver 				= "0.0.1";
 	static String ZFSDrive			= "\\\\.\\PhysicalDrive1";
 	static String ZFSImageDir		= "K:\\zfs\\";
@@ -26,14 +27,9 @@ public class ZSFMain { // extends JFrame {
 	static String ZFSImage			= ZFSImageDirTests + "zol-0.6.1\\vdev0";
 	static PhysicalDrive pdDrv;
 
-	//final   String     ROOT  = "Корневая запись";
-	// Массив листьев деревьев
-	//final   String[]   nodes = new String[]  {"Транзакции (TXG)", "ZFS label"};
-	//final   String[][] leafs = new String[][]{{"1", "2"}, {"0", "1"}};	
-	
 	public static void main(String[] args) {	
-		
-		log.info("PhysicalDrive info Ver "+Ver+" \n");
+
+        log.info("PhysicalDrive info Ver "+Ver+" \n");
 		ZfsTestDDs(ZFSImageDirTests);
 		ZfsTestDrive(ZFSDrive);
 		if (args.length>0) { 
@@ -41,8 +37,8 @@ public class ZSFMain { // extends JFrame {
 		}
 		log.info("End ZSFMain.");				
 	}
-
-	private static void ZfsTestDrive(String zFSDrive) {
+	
+		private static void ZfsTestDrive(String zFSDrive) {
 		 
 		pdDrv = new PhysicalDrive(ZFSDrive, true); 
 		pdDrv.LogFile=ZFSImageDir;
@@ -74,44 +70,6 @@ public class ZSFMain { // extends JFrame {
 		log.info("Params (output is equal to zfs command):");	
 		log.info("zdb -l <device> - list ZFS label properties");			
 	}
-	/*
-	 private ZSFMain() {
-
-		super("ZFS viewer "+ZFSDrive);
-		System.out.println("ZSFMain start");	
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		// Создание модели дерева
-		DefaultTreeModel model = createZFSModel();
-		// Создание дерева
-		ZFSTree tree = new ZFSTree(model);
-		// Размещение дерева в интерфейсе
-		getContentPane().add(new JScrollPane(tree));
-		// Вывод окна на экран
-		setSize(800, 600);
-		setVisible(true);		
-		System.out.println("ZSFMain end");
-	}
 	
-	private DefaultTreeModel createZFSModel() {
-		System.out.println("createZFSModel ");	
-		// Корневой узел дерева
-		DefaultMutableTreeNode root = new DefaultMutableTreeNode(ROOT);
-		// Добавление ветвей - потомков 1-го уровня
-		DefaultMutableTreeNode drink = new DefaultMutableTreeNode(nodes[0]);
-		DefaultMutableTreeNode sweet = new DefaultMutableTreeNode(nodes[1]);
-		// Добавление ветвей к корневой записи
-		root.add(drink);
-		root.add(sweet);
-		// Добавление листьев - потомков 2-го уровня
-		for ( int i = 0; i < leafs[0].length; i++)
-			drink.add(new DefaultMutableTreeNode(new CheckBoxElement(false, leafs[0][i])));
-		for ( int i = 0; i < leafs[1].length; i++)
-			sweet.add(new DefaultMutableTreeNode(new CheckBoxElement(false, leafs[1][i])));
-		// Создание стандартной модели
-		return new DefaultTreeModel(root);
-	}
-	 */
-	
-		
 }
 
