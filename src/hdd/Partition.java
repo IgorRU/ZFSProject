@@ -37,13 +37,13 @@ public class Partition {
 
 	public void Print() {
 
-	    System.out.println("Partition "+Num+":");
-		System.out.println("Активность раздела  = "+ (isActive ? "да" : "нет")); 
-	    System.out.println((isFree ? "Свободное место" : "Раздел данных."));
+	    log.trace("Partition "+Num+":");
+	    log.trace("Активность раздела  = "+ (isActive ? "да" : "нет")); 
+	    log.trace((isFree ? "Свободное место" : "Раздел данных."));
 	    HSCStart.Print();
 	    HSCEnd.Print();
-		System.out.println("Смещение первого сектора = 0x" + Offset1Sector); 		
-		System.out.println("Количество секторов раздела = 0x" + SectorCount); 	
-		System.out.println("Код типа раздела = "+PartName+" (0x"+String.format("%02X", PartNum)+")"); 
+	    log.trace("Смещение первого сектора = 0x" + Offset1Sector); 		
+	    log.trace("Количество секторов раздела = 0x" + SectorCount); 	
+	    log.trace("Код типа раздела = "+PartName+" (0x"+String.format("%02X", PartNum)+")"); 
 	}	
 }

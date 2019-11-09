@@ -1,8 +1,11 @@
 package hdd;
 
+import java.io.File;
+
 import org.apache.log4j.Logger;
 
 import tools.FileTools;
+import tools.LZJBjava;
 //import tools.LZJBjava;
 import tools.PrintTools;
 import zsfpackage.DNblkptr;
@@ -48,14 +51,14 @@ public class PhysicalDrive {
 		if (!isDrive)
 			sDirBlockWrite = FileTools.GetBlockDir(path);
 		gptpd.Pack(PhysicalDrivePath, isDrive);	 
-		gptpd.Print(true);
+		gptpd.Print();
 		// Работа с разделом #3 (zfs)		
 		ZFSStart = (isDrive ? LBAStart3Offset : 0);		 
 		ZFSEnd   = (isDrive ? LBAStart3End    : FileTools.GetFileSize(path));
 		FileTools.SetOffset(gptpd.fc, ZFSStart);
 		byte[] bs = FileTools.GetBytes(gptpd.raf,gptpd.fc, ZFSLabelSize);
 		zfs3.Pack(ZFSStart, ZFSEnd, bs); 
-		zfs3.Print();
+		//zfs3.Print();
 	}
 
 	public void ViewActiveBlock() {
@@ -63,9 +66,9 @@ public class PhysicalDrive {
 		log.info("=== Вывод активного блока ZFSUberBlock");		
 		ZFSLabel L = zfs3.L[LabelBest];
 		int n = L.Ubers.nActiveUber;
-		System.out.println("zfs3.L["+LabelBest+"].nActiveUber: " + n );
+		log.info("zfs3.L["+LabelBest+"].nActiveUber: " + n );
 		ZFSUberBlock u = L.Ubers.UberBlocks[n];
-		u.Print(true);
+		u.Print();
 		GetMOS(u);
 		//for (int i =0; i<256; i++ )  
 		//	if (L.UberArray[i].ub_txg>0)
@@ -80,6 +83,10 @@ public class PhysicalDrive {
 	private void GetMOS(ZFSUberBlock u) {
 		System.out.println("=== получение MOS ==========================================");	
 		DNblkptr b = u.dn_blkptr;	
+		if (b.Elong==0) {
+			log.error("MOS is 0");
+			return;
+		}
 		PrintTools.Print10andHex("Elong", "%08X",b.Elong);
 		PrintTools.Print10andHex("ElongN","%08X",b.ElongN);
 		PrintTools.Print10andHex("psize", "%08X",b.psize);
@@ -92,7 +99,8 @@ public class PhysicalDrive {
 			//int sectors = b.psize+1; - в диске
 			int sectors = b.lsize+1;
 			byte[] bbb = FileTools.GetBytes(gptpd.raf,gptpd.fc, sectors*SectorLength); // 4k = MOS size
-			FileTools.WriteBlock(sDirBlockWrite+String.format("%020X",adr)+"_"+b.txgLogic+".dat", bbb, sectors*SectorLength);
+			String sF = sDirBlockWrite+"Blocks/"+String.format("%020X",adr)+"_"+b.txgLogic+".dat";
+			FileTools.WriteBlock(sF, bbb, sectors*SectorLength);
 			String alg = b.compress.Algorithm;
 			System.out.println("compression = " + alg + ", checksum = " + b.cksum.Algorothm); 	
 			//if (alg.equals("lzjb"))
@@ -107,20 +115,21 @@ public class PhysicalDrive {
 			FileTools.SetOffset(gptpd.fc, root_off);
 			int sectors = (u.dn_blkptr.psize > u.dn_blkptr.lsize ? u.dn_blkptr.psize : u.dn_blkptr.lsize) + 1;
 			sectors = (sectors<4 ? 4 : sectors);
-			byte[] bbs = FileTools.GetBytes(gptpd.raf,gptpd.fc, sectors*SectorLength);
+			byte[] bbs = FileTools.GetBytes(gptpd.raf, gptpd.fc, sectors*SectorLength);
 			DNodePhys dn_root = new DNodePhys();
 			dn_root.Pack(bbs, 0, sectors*SectorLength);
-			dn_root.Print(true);
+			String sF = sDirBlockWrite+"Blocks/dn_root "+String.format("%016X",root_off)+" "+
+					String.format("%04X",u.nUberBlock)+".dat";
+			dn_root.WriteBlock(sF);
+			dn_root.Print(false);
 			for (int j=0; j<3; j++) {
 				DNblkptr dn1 = dn_root.dn_blkptr[j];
 				if (dn1.isNull)
-					System.out.println("dn_root.dn_blkptr["+j+"] is empty");
+					System.out.println("dn_root.dn_blkptr["+j+"] is null");
 				else {		
 					int len  = dn1.psize+1;						
 					String ext = dn1.compress.Algorithm;
 					for (int k=0; k<3; k++) {
-						//if (len!=dn1.asize[k])
-						//	System.out.println("len="+len+", dn1.asize[k]="+dn1.asize[k]);		
 						long addr = dn1.address[k];	
 						if ((addr>ZFSEnd)||(addr<0))
 							continue;
@@ -134,10 +143,11 @@ public class PhysicalDrive {
 						//byte[] bout = LZ4java.lz4DecompressSlow(bb);
 						//System.out.println("bout len"+bout.length);	 
 						
-						//if (ext.equals("lzjb"))
-						//	FileTools.WriteBlock(sDirBlockWrite+String.format("%020X",ext)+"_"+b.txgLogic+" decompress.dat", 
-						//			LZJBjava.decompress(bb), len*SectorLength);		
-						
+						if (ext.equals("lzjb")) {
+							byte[] bdecomp = LZJBjava.decompress(bb);
+							String sFF = sDirBlockWrite+String.format("%020X",ext)+"_"+b.txgLogic+" decompress.dat";
+							FileTools.WriteBlock(sFF, bdecomp, len*SectorLength);		
+						}
 						addr = addr+LBAStart3Offset;	
 						PrintTools.Print10andHex("addr","%08X",addr);
 						FileTools.SetOffset(gptpd.fc, addr);
@@ -155,8 +165,9 @@ public class PhysicalDrive {
 	public void PrintZDB() {
 
 		for (int i=0; i<4; i++) { 
-			//zfs3.L[i].PrintZDB(true); 	
-			zfs3.L[i].PrintZDB2File(sDirBlockWrite + zfs3.L[i].ZFSLabel + ".zdb.txt");
+			String sFile = (isDrive ? "" : (new File(PhysicalDrivePath)).getName() );
+			sFile = sDirBlockWrite + sFile + "." + zfs3.L[i].ZFSLabel + ".zdb.txt";
+			zfs3.L[i].PrintZDB2File(sFile);
 		}
 		
 	}		

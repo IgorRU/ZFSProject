@@ -22,7 +22,7 @@ public class ZMSObjsetType {
 	public void Pack(byte b) {
 		
 		Num=b;
-		log.trace("Compression is "+Num);
+		log.trace("ZMSObjsetType is "+Num);
 		InitHashMaps();
 		Descriptor = GetDescriptorName();
 	}

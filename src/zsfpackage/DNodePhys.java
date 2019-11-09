@@ -33,19 +33,19 @@ public class DNodePhys {
 	public  ZFSCompression compress = new ZFSCompression();
 	private long os_flag;
 	public ZMSObjsetType os_type = new ZMSObjsetType();
-
-	private String sDNodeFile= "K://zfs/Images_zfsonline/DNode.dat";
+	private String sDNodeFile;
+	private byte[] bs;
 
 	public DNodePhys() {
 		
 	}
 	
-	public void Pack(byte[] bs, long offset, long size) {
+	public void Pack(byte[] bb, long offset, long size) {
 			
 		log.trace("DNode: ");
-		DMUadress = offset;	 		
-		PrintTools.Dump(bs, (int)offset, 0x40, false);
-		FileTools.WriteBlock(sDNodeFile, bs, SectorLength);
+		DMUadress = offset;	 	
+		bs = VarTools.byteArray2byteArrayShort(bb, (int)offset, (int)size); 
+		PrintTools.Dump(bs, (int)offset, 0x40);
 		dn_type			= bs[0x00];	 // dmu_object_type_t		   	 0x0A = 10 - DMU_OT_DNODE
 		dn_indblkshift 	= bs[0x01];	 // ln2(indirect block size)   	 0x17 = 128k
 		dn_nlevels 		= bs[0x02];	 // 1=dn_blkptr->data blocks   	 0x02
@@ -74,10 +74,10 @@ public class DNodePhys {
 			dn_blkptr[2].Pack(bs, nn+0x100);
 			System.out.println("dn_blkptr[2] "+ (dn_blkptr[2].isNull ? "fill null" : "fill no null."));
 		} else
-			System.out.println("dn_blkptr[1] и dn_blkptr[2] пусты");	
+			System.out.println("dn_blkptr[1] and dn_blkptr[2] not present.");	
 		os_type.Pack(bs[0x2C0]);
 		os_flag	= VarTools.ByteArray2Long1(bs,0x2C8,8);  		
-		PrintTools.Dump(bs, nn+0x180, (int)(size-nn-0x180), false);
+		PrintTools.Dump(bs, nn+0x180, (int)(size-nn-0x180));
 	} 		
 
 	public void Print(boolean isPrint) {
@@ -85,13 +85,11 @@ public class DNodePhys {
 		if (!isPrint)
 			return;
 		if (dn_blkptr[0].isNull) 
-			System.out.println("dn_blkptr[0] fill null.");
+			 log.info("dn_blkptr[0] fill null.");
 		if (dn_blkptr[1].isNull) 
-			System.out.println("dn_blkptr[1] fill null.");
+			 log.info("dn_blkptr[1] fill null.");
 		if (dn_blkptr[2].isNull) 
-			System.out.println("dn_blkptr[2] fill null.");
-		//if ((dn_blkptr[0].isNull)||(dn_blkptr[1].isNull)||(dn_blkptr[2].isNull))
-		//	return;
+			 log.info("dn_blkptr[2] fill null."); 
 		PrintTools.Print10andHex("dn_type","%04X",dn_type);
 		PrintTools.Print10andHex("dn_indblkshift","%04X",dn_indblkshift);
 		PrintTools.Print10andHex("dn_nlevels","%04X",dn_nlevels);
@@ -109,10 +107,16 @@ public class DNodePhys {
 		PrintTools.Print10andHex("dn_pad3 length","%04X",dn_pad3.length); 
 		os_type.Print();
 		PrintTools.Print10andHex("os_flag","%04X",os_flag); 
-		dn_blkptr[0].Print(isPrint);
+		dn_blkptr[0].Print();
 		if (dn_nblkptr>1) { 
-			dn_blkptr[1].Print(isPrint); 
-			dn_blkptr[2].Print(isPrint);
+			dn_blkptr[1].Print(); 
+			dn_blkptr[2].Print();
 		}			
+	}
+
+	public void WriteBlock(String sF) { 
+		
+		sDNodeFile=sF;
+		FileTools.WriteBlock(sDNodeFile, bs, SectorLength);		
 	}
 }

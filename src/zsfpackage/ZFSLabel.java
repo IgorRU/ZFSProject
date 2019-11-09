@@ -37,8 +37,8 @@ public class ZFSLabel {
 	//static int  cSectors    = cZFSUberblockSize;  // размер L0,L1,L2,L3
 	//static int  cBytesRead  = SectorLength * cSectors;
 	public  boolean isWrite2File = false;
-	public  String Write2FileName = "K:\\\\zfs\\";
-	public String ZFSLabel;
+	//public  String Write2FileName = "K:\\\\zfs\\";
+	public  String ZFSLabel;
 	private byte[] ZFSLabelData;
 	
 	final   String[] zdbKeys = new String[]  {"version", "name", "state", "txg", "pool_guid", 
@@ -67,8 +67,8 @@ public class ZFSLabel {
 		ZFSLabelData = bs;		
 		GetNameValue(ZFSLabelData);	
 		Ubers.Pack(ZFSLabelData); 
-		Ubers.PrintActive(true);
-		PrintZDB(true);
+		Ubers.PrintActive();
+		PrintZDB(false);
 	}	
 	/*
 	private byte[] CheckWriteFile(byte[] bs, boolean isWrite) {
@@ -103,9 +103,9 @@ public class ZFSLabel {
 	private void GetNameValue(byte[] bs) {
 		 
 		int nu = cZFSNameValueBegin;
-		System.out.println("\nencoding methode and host endian = 0x" + VarTools.ByteArray2HexsStr(bs,nu+0x00,4)); 
-		System.out.println("nvl_version = 0x" + VarTools.ByteArray2HexsStr(bs,nu+0x04,4)); 
-		System.out.println("nvl_nvflag  = 0x" + VarTools.ByteArray2HexsStr(bs,nu+0x08,4)); 
+		log.debug("\nencoding methode and host endian = 0x" + VarTools.ByteArray2HexsStr(bs,nu+0x00,4)); 
+		log.debug("nvl_version = 0x" + VarTools.ByteArray2HexsStr(bs,nu+0x04,4)); 
+		log.debug("nvl_nvflag  = 0x" + VarTools.ByteArray2HexsStr(bs,nu+0x08,4)); 
 		while (true) {
 			//System.out.println("encoded size of the nvpairg = " + ByteArray2HexsStr(bs,nu+0x0C,4)); 
 			//System.out.println("decoded size of the nvpairg = " + ByteArray2HexsStr(bs,nu+0x10,4)); 
@@ -126,7 +126,7 @@ public class ZFSLabel {
 				//System.out.println("value hex = " + ByteArray2HexsStr(bs,nu+0x20+n,8)); 
 				nValUINT64= VarTools.ByteArray2LongN(bs,nu+0x20,8);
 				Add2ZDBl(zdb, zdbKeys, sKey, nValUINT64);
-				System.out.println("==="+sKey+" = " + nValUINT64+" or 0x"+String.format("%08X",nValUINT64)); 
+				log.debug("==="+sKey+" = " + nValUINT64+" or 0x"+String.format("%08X",nValUINT64)); 
 				nu = nu + 0x28;
 			} else
 			if (nDataType==9) { // DATA_TYPE_STRING
@@ -135,14 +135,14 @@ public class ZFSLabel {
 				//System.out.println("value hex = " + ByteArray2HexsStr(bs,nu+0x24,nn)); 
 				String sVal = VarTools.ByteArray2Str(bs, nu+0x24, nn);
 				Add2ZDB(zdb, zdbKeys, sKey,sVal,true);
-				System.out.println("==="+sKey+" =  " + sVal); 
+				log.debug("==="+sKey+" =  " + sVal); 
 				nu = nu+ 0x24 + nn + (nn % 4 == 0 ? 0 : 4 - nn % 4); 
 			} else
 			if (nDataType==19) { // DATA_TYPE_NVLIST
 				int nn = (int)VarTools.ByteArray2LongN(bs,nu+0x20,4);
 				//System.out.println("??0 = " + nn);  
 				nn = (int)VarTools.ByteArray2LongN(bs,nu+0x24, 4);
-				System.out.println("==="+sKey+" =  " + nn);  
+				log.debug("==="+sKey+" =  " + nn);  
 				nu = nu+ 0x28; 
 				//System.out.println("nvl_nvflag = 0x" + ByteArray2HexsStr(bs,nu,8)); 
 				nu = nu - 0x0C;
@@ -175,7 +175,7 @@ public class ZFSLabel {
 						nValUINT64= VarTools.ByteArray2LongN(bs,nu+0x20,8);
 						Add2ZDBl(zdbVdev, zdbVdevKeys, sKey, nValUINT64);
 						if (!sKey.trim().isEmpty())
-							System.out.println("======"+sKey+" = " + nValUINT64+" or 0x"+String.format("%08X",nValUINT64)); 
+							log.debug("======"+sKey+" = " + nValUINT64+" or 0x"+String.format("%08X",nValUINT64)); 
 						nu = nu + 0x28;
 					} else
 					if (nDataType==9) { // DATA_TYPE_STRING
@@ -184,7 +184,7 @@ public class ZFSLabel {
 						//System.out.println("value hex = " + ByteArray2HexsStr(bs,nu+0x24,nn)); 
 						String sVal = VarTools.ByteArray2Str(bs, nu+0x24, nn);
 						if (!sKey.trim().isEmpty())
-							System.out.println("======"+sKey+" = " + sVal); 
+							log.debug("======"+sKey+" = " + sVal); 
 						Add2ZDB(zdbVdev, zdbVdevKeys, sKey, sVal, true);
 						nu = nu + 0x24 + nn + (nn % 4 == 0 ? 0 : 4 - nn % 4); 
 					} else
@@ -193,7 +193,7 @@ public class ZFSLabel {
 						nn = (int)VarTools.ByteArray2LongN(bs,nu+0x20,4);
 						//System.out.println("??0 = " + nn);  
 						nn = (int)VarTools.ByteArray2LongN(bs,nu+0x24, 4);
-						System.out.println("==array===="+sKey+" =  " + nPair);  
+						log.debug("==array===="+sKey+" =  " + nPair);  
 						//Add2ZDBl(zdbVdev, zdbVdevKeys, sKey, nPair);
 						nu = nu + 0x28; 
 						//System.out.println("--array----nvl_nvflag = 0x" + ByteArray2HexsStr(bs,nu,8)); 
@@ -211,7 +211,7 @@ public class ZFSLabel {
 								}
 								z.clear();		
 								nChild++;
-								System.out.println("--array----children[" + nChild +"]");
+								log.debug("--array----children[" + nChild +"]");
 							}
 							//System.out.println("--array----key = " + sKey); 
 							n = n + (n % 4 == 0 ? 0 : 4 - n % 4);
@@ -221,7 +221,7 @@ public class ZFSLabel {
 								nu = nu + 0x0C + n;
 								//System.out.println("--array----value hex = " + ByteArray2HexsStr(bs,nu,8)); 
 								long nValUINT64l = VarTools.ByteArray2LongN(bs,nu,8);
-								System.out.println("==array===="+sKey+" = " + nValUINT64l+
+								log.debug("==array===="+sKey+" = " + nValUINT64l+
 										" or 0x"+String.format("%08X",nValUINT64l)); 
 								Add2ZDBl(z, zdbVdevChildKeys, sKey, nValUINT64l);
 								nu = nu + 0x08;
@@ -231,11 +231,11 @@ public class ZFSLabel {
 								//System.out.println("size of val = " + nn);
 								//System.out.println("value hex = " + ByteArray2HexsStr(bs,nu+0x24,nn)); 
 								String sVal = VarTools.ByteArray2Str(bs, nu+0x14, nn);
-								System.out.println("==array===="+sKey+" = " + sVal); 
+								log.debug("==array===="+sKey+" = " + sVal); 
 								Add2ZDB(z, zdbVdevChildKeys, sKey, sVal, true);
 								nu = nu + 0x14 + nn + (nn % 4 == 0 ? 0 : 4 - nn % 4); 
 							} else { 
-								System.out.println("nDataType = " + nDataType);
+								log.debug("nDataType = " + nDataType);
 								if (VarTools.ByteArray2LongN(bs,nu,8)==0)
 									break;
 							}				
@@ -253,7 +253,7 @@ public class ZFSLabel {
 						zdbVdevChild.add(z);
 					}
 					else { 
-						System.out.println("nDataType = " + nDataType);
+						log.debug("nDataType = " + nDataType);
 						if (VarTools.ByteArray2LongN(bs,nu,8)==0)
 							break;
 					}				
@@ -268,7 +268,7 @@ public class ZFSLabel {
 				}
 			}
 			else {
-				System.out.println("nDataType = " + nDataType);
+				log.debug("nDataType = " + nDataType);
 			}				
 			//System.out.println("nvl_nvflag = 0x" + ByteArray2HexsStr(bs,nu,8)); 
 			long ender = VarTools.ByteArray2LongN(bs,nu,8);
@@ -276,7 +276,7 @@ public class ZFSLabel {
 			if (ender==0)
 				break;
 		}
-		System.out.println("----------------------------\n");
+		log.debug("----------------------------\n");
 	} 
 
 	private void Add2ZDBl(HashMap<String, String> z, String[] zKey, String sKey, long iVal) {
@@ -335,6 +335,7 @@ public class ZFSLabel {
 	
 	public void PrintZDB2File(String sFile) {
 		
+		log.info("Print zdb output to " + sFile);
 		PrintStream ps = System.out; 
 		try {
 			File f = new File(sFile);

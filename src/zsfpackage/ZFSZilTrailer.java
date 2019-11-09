@@ -28,14 +28,12 @@ public class ZFSZilTrailer {
 			zit_bt.Pack(bs, nu+0x90);
 		}
 			
-		public void Print(boolean isPrint) {
+		public void Print() {
 			 
-			if (!isPrint)
-				return;
 			PrintTools.Print10andHex("zit_pad",  "%08X",zit_pad);
 			PrintTools.Print10andHex("zit_nused","%08X",zit_nused);
-			zit_next_blk.Print(isPrint);
-			zit_bt.Print(isPrint);
+			zit_next_blk.Print();
+			zit_bt.Print();
 		}
 
 }

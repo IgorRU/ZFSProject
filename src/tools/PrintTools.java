@@ -11,15 +11,14 @@ public class PrintTools {
 	
 	private static final Logger log = Logger.getLogger(PrintTools.class.getName()); 
 
-	   static public void Dump(byte[] bs, int start, boolean b) {
+	   static public void Dump(byte[] bs, int start) {
 		   
-		   Dump(bs, start, -1, b);
+		   Dump(bs, start, -1);
 	   }
 	   
-	   static public void Dump(byte[] bs, int start, int count, boolean isDump) {
-			if (!isDump)
-				return;
-		    String sDump =""; 
+	   static public void Dump(byte[] bs, int start, int count) {
+
+		   String sDump =""; 
 			if (count==-1)
 				count=bs.length;  
 		    for (int i=0; i<=count-1; i++) {
@@ -27,12 +26,12 @@ public class PrintTools {
 		    		sDump=sDump+(String.format("%03X",start)+" ");
 		    	int j = i + start;
 		    	if ((i % 16 == 0)&&(i>0)) {
-		    		log.info(sDump);
+		    		log.debug(sDump);
 		    		sDump=String.format("%03X",j)+" ";	 
 		    	}
 		    	sDump=sDump+(String.format("%02X", bs[j])+" ");
 		    } 
-			log.info(sDump);
+			log.debug(sDump);
 	   }
 	   
 	  static public String GetHashMapKeyVlaue(HashMap<Integer, String> h, int n) {
@@ -77,21 +76,21 @@ public class PrintTools {
 
 	  public static void Print10andHex(String sTitle, String sHex, BigInteger b) {
 		
-		System.out.println(sTitle + " = " + b + " or 0x" + String.format(sHex,b));	 
+		  log.info(sTitle + " = " + b + " or 0x" + String.format(sHex,b));	 
 	  }
 	  
 	  public static void Print10andHex(String sTitle, String sHex, byte b) {
 		
-		System.out.println(sTitle + " = " + b + " or 0x" + String.format(sHex,b));	 
+		  log.info(sTitle + " = " + b + " or 0x" + String.format(sHex,b));	 
 	  }
 
 	  public static void Print10andHex(String sTitle, String sHex, int b) {
 		
-		System.out.println(sTitle + " = " + b + " or 0x" + String.format(sHex,b));	 
+		  log.info(sTitle + " = " + b + " or 0x" + String.format(sHex,b));	 
 	  }
 
 	  public static void Print10andHex(String sTitle, String sHex, long b) {
 		
-		System.out.println(sTitle + " = " + b + " or 0x" + String.format(sHex,b));	 
+		  log.info(sTitle + " = " + b + " or 0x" + String.format(sHex,b));	 
 	  }
 }

@@ -78,54 +78,56 @@ public class DNblkptr {
         checksum=VarTools.byteArray2byteArrayShort(bs, nu+0x60, 0x20);
 	}
 	
-	public void Print(boolean isPrint) {
+	public void Print() {
 		 
-		if (!isPrint||isNull)
+		if (isNull) {
+			log.debug("blkptr_t is null.");
 			return;
-		log.info("\nblkptr_t offset = 0x" + String.format("%08X",nu));
+		}
+		log.debug("\nblkptr_t offset = 0x" + String.format("%08X",nu));
 		for (int i = 0; i<3; i++) {
 			int nu0 = i*16;
-			log.info("DVA " + i+"            "+String.format("%08X: ",nu+nu0+0x00));
-			log.info("---vdev1 = 0x" +  String.format("%04X",vdev[i]));
-			log.info("---grid = 0x" +  String.format("%02X",grid[1]));
-			log.info("---asize (Allocated block size) = 0x" +  
+			log.debug("DVA " + i+"            "+String.format("%08X: ",nu+nu0+0x00));
+			log.debug("---vdev1 = 0x" +  String.format("%04X",vdev[i]));
+			log.debug("---grid = 0x" +  String.format("%02X",grid[1]));
+			log.debug("---asize (Allocated block size) = 0x" +  
 	        		String.format("%02X",asize[i]));
-			log.info("---G = 0x" +  String.format("%01X",G[i]) + 
+			log.debug("---G = 0x" +  String.format("%01X",G[i]) + 
 	        		(G[i] == -128 ? ". Gang block" : ". Non gang block"));
-			log.info("---offset = 0x" +  String.format("%08X",offset[i])+" or "+
+			log.debug("---offset = 0x" +  String.format("%08X",offset[i])+" or "+
 	        		offset[i]);
-			log.info("---address = 0x" +  String.format("%08X",address[i])+" or "+
+			log.debug("---address = 0x" +  String.format("%08X",address[i])+" or "+
 	        		address[i]);
-			log.info("---end = 0x" +  String.format("%04X",nu0+0x10));	        
+			log.debug("---end = 0x" +  String.format("%04X",nu0+0x10));	        
 		}
-		log.info(String.format("%08X: ",nu+0x30)+
+		log.debug(String.format("%08X: ",nu+0x30)+
         		"Elong = 0x" +  String.format("%016X",Elong));
-		log.info(String.format("%08X: ",nu+0x30)+ "E = " + E);
-		log.info(String.format("%08X: ",nu+0x30)+ "lvl = " + lvl);
-		log.info("lvl ="+lvl);
-		log.info(String.format("%08X: ",nu+0x30)+ "btype is " + 
+		log.debug(String.format("%08X: ",nu+0x30)+ "E = " + E);
+		log.debug(String.format("%08X: ",nu+0x30)+ "lvl = " + lvl);
+		log.debug("lvl ="+lvl);
+		log.debug(String.format("%08X: ",nu+0x30)+ "btype is " + 
         		btype.Descriptor + " (" +btype.Type + ") or = "+btype.Num); 
         if (btype.Num!=0)
-        	log.info("btype.Num ="+btype.Num);
-        log.info(String.format("%08X: ",nu+0x32)+ "cksum = " + cksum.Num +
+        	log.debug("btype.Num ="+btype.Num);
+        log.debug(String.format("%08X: ",nu+0x32)+ "cksum = " + cksum.Num +
         		". "+cksum.Descriptor+" or "+ cksum.Algorothm);  
         if (cksum.Num!=7)
-        	log.info("cksum.Num ="+cksum.Num);
-        log.info(String.format("%08X: ",nu+0x33)+ "comp = " + compress.Num +
+        	log.debug("cksum.Num ="+cksum.Num);
+        log.debug(String.format("%08X: ",nu+0x33)+ "comp = " + compress.Num +
         		". "+compress.Descriptor+" or "+ compress.Algorithm);
-        log.info(String.format("%08X: ",nu+0x34)+"psize (Phisical block size) = " + 
+        log.debug(String.format("%08X: ",nu+0x34)+"psize (Phisical block size) = " + 
         		psize + " or 0x" + String.format("%02X",psize));
-        log.info(String.format("%08X: ",nu+0x36)+"lsize (Logical block size) = " + 
+        log.debug(String.format("%08X: ",nu+0x36)+"lsize (Logical block size) = " + 
         		lsize +" 0x" + String.format("%02X",lsize));   
-        log.info(String.format("%08X: ",nu+0x48)+
+        log.debug(String.format("%08X: ",nu+0x48)+
         		"Birth TXG (phisical) = 0x"  +  String.format("%016X",txgPhisical));
-        log.info(String.format("%08X: ",nu+0x50)+
+        log.debug(String.format("%08X: ",nu+0x50)+
         		"Birth TXG (logic) = 0x"  +  String.format("%016X",txgLogic));
-        log.info(String.format("%08X: ",nu+0x58)+
+        log.debug(String.format("%08X: ",nu+0x58)+
         		"fill count = 0x" +  String.format("%016X",fillCount)); 
-        log.info(String.format("%08X: ",nu+0x60)+"Checksum:");
-        PrintTools.Dump(checksum,0,0x20,true);	
-        log.info("blkptr_t end = 0x" + String.format("%08X",nu+128)+"\n"); 
+        log.debug(String.format("%08X: ",nu+0x60)+"Checksum:");
+        PrintTools.Dump(checksum,0,0x20);	
+        log.debug("blkptr_t end = 0x" + String.format("%08X",nu+128)+"\n"); 
 	}
 	
 }

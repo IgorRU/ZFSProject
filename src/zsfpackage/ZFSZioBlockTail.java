@@ -27,12 +27,10 @@ public class ZFSZioBlockTail {
 		zbt_cksum = VarTools.byteArray2byteArrayShort(bs, offset, 32);
 	}
 	
-	public void Print(boolean isPrint) {
+	public void Print() {
 		 
-		if (!isPrint)
-			return;
 		PrintTools.Print10andHex("zbt_magic",  "%16X",zbt_magic);
-		PrintTools.Dump(zbt_cksum, 0, isPrint);
+		PrintTools.Dump(zbt_cksum, 0);
 	}
 
 }

@@ -87,16 +87,14 @@ public class GPT {
 		isMBROk = ((ProtectiveMBR[MBREnd]==0x55)&&(ProtectiveMBR[MBREnd+1]==0xAA-256));		
 	}
 
-	public void Print(boolean isPrintDump) {
+	public void Print() {
  
-		if (!isPrintDump)
-			return;
 		if (isDrive) {		
 			System.out.println("MBR Info:");
 			System.out.println("Length= "+ProtectiveMBR.length);			
-			PrintPartitionEntries(isPrintDump);
-			PrintTools.Dump(ProtectiveMBR, 0, ProtectiveMBR.length, isPrintDump);
-			GPTH.Print(isPrintDump);		 
+			PrintPartitionEntries();
+			PrintTools.Dump(ProtectiveMBR, 0, ProtectiveMBR.length);
+			GPTH.Print();		 
 			for (int i=0; i<4; i++) {
 				Parts[i].Print();
 			}
@@ -112,11 +110,11 @@ public class GPT {
 		}
 	}
 	
-	public void PrintPartitionEntries(boolean isPrintDump) {
+	public void PrintPartitionEntries() {
 		
 		System.out.println("\nPartitionEntries info:");
 		System.out.println("Length = "+PartitionEntries.length);
-		PrintTools.Dump(PartitionEntries, 0, 512, isPrintDump); 
+		PrintTools.Dump(PartitionEntries, 0, 512); 
 	    System.out.println("partGUID = "+partGUID);
 	    System.out.println("partGUIDName = "+sPartpartGUIDName);
 	    System.out.println("partGUIDUniq = "+partGUIDUniq);

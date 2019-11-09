@@ -41,7 +41,7 @@ public class FileTools {
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
-		PrintTools.Print10andHex("Position into HDD =","%08X",pointer); 
+		PrintTools.Print10andHex("Position into HDD","%08X", pointer); 
 		try {		        
 			fchanel.read(buf);
 		    pointer = f.getFilePointer();
@@ -61,7 +61,8 @@ public class FileTools {
 		}		
 	}		
 
-	public static byte[] WriteBlock(String sFileOut, byte[] bs, int nBytes) {
+	public static boolean WriteBlock(String sFileOut, byte[] bs, int nBytes) {
+		
 		
 		log.debug("WriteBlock path = " +  sFileOut);
 		int n = nBytes;
@@ -69,15 +70,26 @@ public class FileTools {
 		File f = new File(sFileOut); 
 		for (int i=0; i < n; i++)
 			bOut[i]=bs[i];
+		if (CheckByteArrayAs0(bOut)) {
+			log.info("Byte array is zero. Data not save to file " + sFileOut);
+			return false;
+		}
 		try {
 			Files.write(f.toPath(), bOut);
 			log.info("Write  to "+sFileOut+" has "+ n+" bytes.");
 		} catch (IOException e) { 
 			e.printStackTrace();
 		}
-		return bOut;
+		return true;
 	}
 	
+	private static boolean CheckByteArrayAs0(byte[] b) {
+		for (int i=0; i < b.length; i++)
+			if (b[i]!=0)
+				return false;
+		return true;
+	}
+
 	public void SaveToFile(byte b[], String path, boolean isDelete)  {
 		
 		if (isDelete) {

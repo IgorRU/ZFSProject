@@ -80,7 +80,7 @@ public class VarTools {
 		return s;
 	}
 
-   static public byte[] byteArray2byteArrayShort(byte[] barr,int start, int nb) {
+   static public byte[] byteArray2byteArrayShort(byte[] barr, int start, int nb) {
 		byte[] b = new byte[nb];
 		for (int i=0; i<nb; i++)
 			b[i]=barr[start+i]; 

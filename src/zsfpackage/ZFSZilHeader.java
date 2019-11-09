@@ -42,7 +42,7 @@ public class ZFSZilHeader {
 		PrintTools.Print10andHex("zh_claim_seq",   "%08X",zh_claim_seq);
 		PrintTools.Print10andHex("zh_flags",       "%08X",zh_flags);
 		PrintTools.Print10andHex("zh_claim_ir_seq","%08X",zh_claim_ir_seq);
-		zh_log.Print(isPrint);
+		zh_log.Print();
 	}
 	
 }

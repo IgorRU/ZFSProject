@@ -18,7 +18,7 @@ public class ZFSPartition {
 	public long ZFSL1Start = 256*1024;
 	// L1 = 256 ... 512 kb
 	// data
-	public long ZFSDataStart=512*1024;
+	public long ZFSDataStart=2*ZFSL1Start*1024;
 	public long ZFSDataAfteBootStart=4*1024*1024;
 	// L2 = N-512 ... N-256 kb
 	// L3 = N-256 ... N kb 
@@ -27,23 +27,22 @@ public class ZFSPartition {
 	
 	public ZFSPartition() {
 		
-		log.info("ZFSPartition");
+		log.info("ZFSPartition constructor");
 	}
 		
 	public void Pack(long LBAStart, long LBAEnd, byte[] bs) {
 
 		ZFSPartitionStart = LBAStart;
-		ZFSPartitionEnd   = LBAEnd;
-		//System.out.println("bs len = "+bs.length);
+		ZFSPartitionEnd   = LBAEnd; 
 		this.Print();						
 		for (int l = 0; l<4; l++) {
 			L[l] = new ZFSLabel();
-			L[l].Pack("L"+String.valueOf(l), bs,(int)(LBAStart+ZFSL0Start)); //
+			L[l].Pack("L"+String.valueOf(l), bs, (int)(ZFSLabelStart[l])); //
 			L[l].Print();
 		}
 		PrintTools.Print10andHex("ZFSDataAfteBootStart", "%08X", ZFSDataAfteBootStart);
 		PrintTools.Print10andHex("End   LBA", "%08X", ZFSPartitionEnd);
-		System.out.println(" or "+ ZFSPartitionEnd/SectorLength);		
+		log.info(" or "+ ZFSPartitionEnd/SectorLength);		
 	} 
 
 	public void Print() {

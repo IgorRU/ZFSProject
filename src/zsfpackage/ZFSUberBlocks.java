@@ -16,14 +16,14 @@ public class ZFSUberBlocks {
 
 	public ZFSUberBlock[] UberBlocks = new ZFSUberBlock[UberBlocksInLabel];
 	
-	public int nActiveUber 		= -1;
-	public int nActiveUberCount = -1;
-	public long nActiveUberTxg	= -1;
+	public int  nActiveUber 	 = -1;
+	public int  nActiveUberCount = -1;
+	public long nActiveUberTxg	 = -1;
 
-	public int nMinUber			= -1;
-	public int nMinUberCount	= -1;
-	public long nMinUberTxg		= Long.MAX_VALUE;
-	public ArrayList<Long> txgs = new ArrayList<Long>(); // список транзакций
+	public int  nMinUber		 = -1;
+	public int  nMinUberCount	 = -1;
+	public long nMinUberTxg		 = Long.MAX_VALUE;
+	public ArrayList<Long> txgs  = new ArrayList<Long>();  
 	
 	public ZFSUberBlocks() {
 		
@@ -67,25 +67,23 @@ public class ZFSUberBlocks {
 			if (uu>0)
 				if (!txgs.contains(uu))
 					txgs.add(uu);
-			UberBlocks[i].Print(false);
+			UberBlocks[i].Print();
 		} 
 		Collections.sort(txgs);
 	}
 	
-	public void PrintActive(boolean isPrint) {
+	public void PrintActive() {
 
-		if (!isPrint)
-			return;
 		long n = UberBlocks[nActiveUber].UberOffsetAbs; 
-		System.out.println("Active UberBlock is = " + nActiveUber +". Txg = "+ 
-				nActiveUberTxg + ". Offset = 0x"+String.format("%08X",n)); 
-		System.out.println("Active UberBlocks with Txg = "+ nActiveUberTxg+" is " + 
-				nActiveUberCount);		
-		System.out.println("txgs count = " +txgs.size()+ ", min = " + nMinUberTxg +
-				", active (max) = " + nActiveUberTxg+" 0x"+String.format("%4X",nActiveUberTxg));
-		System.out.println("min count = " + nMinUberCount + ", active (max) count = " + 
+		log.info("Active UberBlock is = " + nActiveUber +". Txg = "+ 
+				nActiveUberTxg + ". Offset = 0x"+String.format("%08X",n)+
+				", count = " +nActiveUberCount); 	
+		log.info("Txgs count = " +txgs.size()+ ", min = " + nMinUberTxg + 
+				", active (max) = " + nActiveUberTxg+" or 0x"+ 
+				String.format("%04X",nActiveUberTxg));
+		log.info("min count = " + nMinUberCount + ", active (max) count = " + 
 				nActiveUberCount);
-		UberBlocks[nActiveUber].Print(true);
+		UberBlocks[nActiveUber].Print();
 	}
 	
 }

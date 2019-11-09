@@ -48,7 +48,7 @@ public class GPTHeader {
 		CRCzPart = 	VarTools.ByteArray2Int(PrimaryGPTHeader,88);
 	}
 	
-	public void Print(boolean isPrintDump) {
+	public void Print() {
 		
 		System.out.println("\nGPTHeader info:");
 		System.out.println("Length = " + GPTHeaderSize );
@@ -66,7 +66,7 @@ public class GPTHeader {
 		PrintTools.Print10andHex("StartingLBAPartitions", "%04X",StartingLBAPartitions);   
 		PrintTools.Print10andHex("PartitionSize", "%04X",PartitionSize);   
 		PrintTools.Print10andHex("CRCzPart",      "%04X",CRCzPart);  
-		PrintTools.Dump(PrimaryGPTHeader,92,GPTHeaderSize-92,isPrintDump);
+		PrintTools.Dump(PrimaryGPTHeader,92,GPTHeaderSize-92);
 	}
 		
 }
