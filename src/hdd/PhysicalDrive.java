@@ -5,14 +5,15 @@ import java.io.File;
 import org.apache.log4j.Logger;
 
 import tools.FileTools;
+import tools.LZ4java;
 import tools.LZJBjava;
-//import tools.LZJBjava;
 import tools.PrintTools;
 import zsfpackage.DNblkptr;
 import zsfpackage.DNodePhys;
 import zsfpackage.ZFSLabel;
 import zsfpackage.ZFSPartition;
 import zsfpackage.ZFSUberBlock;
+import zsfpackage.ZfsConst;
 
 public class PhysicalDrive {	
 
@@ -24,14 +25,13 @@ public class PhysicalDrive {
 	static long ZFSL0Start = ZFSPartionStart;
 	static long ZFSL0NameValueStart = ZFSL0Start+32;
 	
-	static int SectorLength = 512; 
-	static int ZFSLabelSize = SectorLength*1024*512; //   256k
+	static int ZFSLabelSize = ZfsConst.SectorLength*1024*512; //   256k
 	public String PhysicalDrivePath;
 	public GPT gptpd = new GPT();
 	private int LabelBest = 2;
 
-	private long LBAStart3Offset = 1050624L*SectorLength;	 //  0x000100800
-	private long LBAStart3End    = 5860533134L*SectorLength; //  0x15D50A38E		
+	private long LBAStart3Offset = 1050624L*ZfsConst.SectorLength;	  //  0x000100800
+	private long LBAStart3End    = 5860533134L*ZfsConst.SectorLength; //  0x15D50A38E		
 	
 	public boolean isPrint = false;
 	
@@ -51,8 +51,8 @@ public class PhysicalDrive {
 		if (!isDrive)
 			sDirBlockWrite = FileTools.GetBlockDir(path);
 		gptpd.Pack(PhysicalDrivePath, isDrive);	 
-		gptpd.Print();
-		// Работа с разделом #3 (zfs)		
+		//gptpd.Print();
+		// Use partition #3 (zfs)		
 		ZFSStart = (isDrive ? LBAStart3Offset : 0);		 
 		ZFSEnd   = (isDrive ? LBAStart3End    : FileTools.GetFileSize(path));
 		FileTools.SetOffset(gptpd.fc, ZFSStart);
@@ -63,12 +63,15 @@ public class PhysicalDrive {
 
 	public void ViewActiveBlock() {
 		
-		log.info("=== Вывод активного блока ZFSUberBlock");		
+		log.info("=== Active block ===");		
 		ZFSLabel L = zfs3.L[LabelBest];
 		int n = L.Ubers.nActiveUber;
 		log.info("zfs3.L["+LabelBest+"].nActiveUber: " + n );
 		ZFSUberBlock u = L.Ubers.UberBlocks[n];
 		u.Print();
+		String sF = sDirBlockWrite+"Blocks/"+String.format("%020X",u.offset)+"_"+
+				u.ub_txg+".dat";
+		u.WriteBlock(sF);			
 		GetMOS(u);
 		//for (int i =0; i<256; i++ )  
 		//	if (L.UberArray[i].ub_txg>0)
@@ -81,7 +84,7 @@ public class PhysicalDrive {
 	}
 	
 	private void GetMOS(ZFSUberBlock u) {
-		System.out.println("=== получение MOS ==========================================");	
+		System.out.println("=== MOS ===");	
 		DNblkptr b = u.dn_blkptr;	
 		if (b.Elong==0) {
 			log.error("MOS is 0");
@@ -95,18 +98,47 @@ public class PhysicalDrive {
 		for (int i=0; i<3; i++) {
 			long adr = ZFSStart + b.address[i];
 			PrintTools.Print10andHex("addr["+i+"]","%08X",adr);	    
-			FileTools.SetOffset(gptpd.fc,adr);
-			//int sectors = b.psize+1; - в диске
+			FileTools.SetOffset(gptpd.fc, adr);
 			int sectors = b.lsize+1;
-			byte[] bbb = FileTools.GetBytes(gptpd.raf,gptpd.fc, sectors*SectorLength); // 4k = MOS size
-			String sF = sDirBlockWrite+"Blocks/"+String.format("%020X",adr)+"_"+b.txgLogic+".dat";
-			FileTools.WriteBlock(sF, bbb, sectors*SectorLength);
+			int size = sectors*ZfsConst.SectorLength;
+			// read ub_rootbp
+			byte[] bbb = FileTools.GetBytes(gptpd.raf, gptpd.fc, size); // 4k = MOS size
 			String alg = b.compress.Algorithm;
-			System.out.println("compression = " + alg + ", checksum = " + b.cksum.Algorothm); 	
-			//if (alg.equals("lzjb"))
-			//	FileTools.WriteBlock(sDirBlockWrite+String.format("%020X",adr)+"_"+b.txgLogic+" decompress.dat", 
-			//			LZJBjava.decompress(bbb), sectors*SectorLength);						
+			log.info("compression = " + alg + ", checksum = " + b.cksum.ObjsetType); 
+			byte[] bout = null;
+			String sF = sDirBlockWrite+"Blocks/"+String.format("%020X",adr)+"_"+b.txgLogic;
+			if (alg.equals("none")) {
+				sF = sF+".dat"; 
+				bout = bbb.clone();
+			}
+			if (alg.equals("lzjb")) {
+				FileTools.WriteBlock_(sF+".lzjb", bbb, size);	
+				bout = LZJBjava.decompress(bbb);	
+				log.debug("bout len"+bout.length);
+				sF = sF+" decomp.dat";	 	
+			}  
+			if (alg.equals("lz4")) {
+				FileTools.WriteBlock_(sF+".lz4", bbb, size);	
+				bout = LZ4java.lz4DecompressSlow(bbb);
+				log.debug("bout len"+bout.length); 	
+			}  
+			log.info("------------------------------------------------------------");
+			FileTools.WriteBlock_(sF, bout, size); // write unpack (nonpask) dnode_phys	
+			DNodePhys dn_root = new DNodePhys();
+			// Analize dnode_phys	
+			dn_root.Pack(bout, 0, size);
+			dn_root.Print(true);
+			for (int j=0; j<3; j++) {
+				DNblkptr dn1 = dn_root.dn_blkptr[j];
+				if (dn1.isNull)
+					System.out.println("dn_root.dn_blkptr["+j+"] is null");
+				else {		
+					dn1.Print();
+				}
+			}			
+			System.out.println(" ");			
 		}
+		/*
 		for (int i=0; i<3; i++) {
 			System.out.println(i+" =============================================");
 			long root_off = ZFSStart + u.dn_blkptr.address[i];			
@@ -115,9 +147,9 @@ public class PhysicalDrive {
 			FileTools.SetOffset(gptpd.fc, root_off);
 			int sectors = (u.dn_blkptr.psize > u.dn_blkptr.lsize ? u.dn_blkptr.psize : u.dn_blkptr.lsize) + 1;
 			sectors = (sectors<4 ? 4 : sectors);
-			byte[] bbs = FileTools.GetBytes(gptpd.raf, gptpd.fc, sectors*SectorLength);
+			byte[] bbs = FileTools.GetBytes(gptpd.raf, gptpd.fc, sectors*ZfsConst.SectorLength);
 			DNodePhys dn_root = new DNodePhys();
-			dn_root.Pack(bbs, 0, sectors*SectorLength);
+			dn_root.Pack(bbs, 0, sectors*ZfsConst.SectorLength);
 			String sF = sDirBlockWrite+"Blocks/dn_root "+String.format("%016X",root_off)+" "+
 					String.format("%04X",u.nUberBlock)+".dat";
 			dn_root.WriteBlock(sF);
@@ -139,27 +171,30 @@ public class PhysicalDrive {
 							continue;						
 						byte[] bb = FileTools.GetBytes(gptpd.raf,gptpd.fc, len*512);
 						String sFile = sDirBlockWrite+ String.format("%020X", addr)+"_"+dn1.txgLogic +"_MOS." + ext;
-						FileTools.WriteBlock(sFile, bb, len*SectorLength);	
-						//byte[] bout = LZ4java.lz4DecompressSlow(bb);
-						//System.out.println("bout len"+bout.length);	 
-						
+						FileTools.WriteBlock_(sFile, bb, len*ZfsConst.SectorLength);	
+						byte[] bout = LZ4java.lz4DecompressSlow(bb);
+						System.out.println("bout len"+bout.length);	
+						/*
 						if (ext.equals("lzjb")) {
 							byte[] bdecomp = LZJBjava.decompress(bb);
 							String sFF = sDirBlockWrite+String.format("%020X",ext)+"_"+b.txgLogic+" decompress.dat";
-							FileTools.WriteBlock(sFF, bdecomp, len*SectorLength);		
+							FileTools.WriteBlock(sFF, bdecomp, len*ZfsConst.SectorLength);		
 						}
+						*/
+		/*
 						addr = addr+LBAStart3Offset;	
 						PrintTools.Print10andHex("addr","%08X",addr);
 						FileTools.SetOffset(gptpd.fc, addr);
-						byte[] bbb = FileTools.GetBytes(gptpd.raf,gptpd.fc, len*SectorLength);
+						byte[] bbb = FileTools.GetBytes(gptpd.raf,gptpd.fc, len*ZfsConst.SectorLength);
 						String sFile2 = sDirBlockWrite + String.format("%020X", addr)+"_"+dn1.txgLogic +"_MOS+LBA." + ext;
-						FileTools.WriteBlock(sFile2, bbb, len*SectorLength);	
+						FileTools.WriteBlock_(sFile2, bbb, len*ZfsConst.SectorLength);	
 						//byte[] bout2 = LZ4java.lz4DecompressSlow(bb);
 						//System.out.println("bout2.len"+bout2.length);
 					}
 				}
 			}
-		}		
+			
+		}	*/	
 	}
 
 	public void PrintZDB() {

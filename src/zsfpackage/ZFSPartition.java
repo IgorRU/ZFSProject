@@ -8,22 +8,16 @@ public class ZFSPartition {
 	
 	private static final Logger log = Logger.getLogger(ZFSPartition.class.getName()); 
 
-	static int  SectorLength = 512; 
 	public long ZFSPartitionStart   = -1;  // 1050624   
 	public long ZFSPartitionEnd     = -1;  //5860533134L; 
 	public long ZFSSize;
-	// ZFS Partition
-	public long ZFSL0Start=0;
 	public ZFSLabel[] L = new ZFSLabel[4]; // L0 = 0   ... 256 kb
-	public long ZFSL1Start = 256*1024;
-	// L1 = 256 ... 512 kb
-	// data
-	public long ZFSDataStart=2*ZFSL1Start*1024;
-	public long ZFSDataAfteBootStart=4*1024*1024;
+	// ZFS Partition
+	// L0+L1 = 0 ... 512 kb 
 	// L2 = N-512 ... N-256 kb
 	// L3 = N-256 ... N kb 
-	static int cZFSLabelSize = 512*SectorLength;
-	public long ZFSLabelStart[] = {ZFSL0Start, ZFSL1Start, ZFSPartitionEnd-cZFSLabelSize*2, ZFSPartitionEnd-cZFSLabelSize};
+	static int cZFSLabelSize = 512*ZfsConst.SectorLength;
+	public long ZFSLabelStart[] = {ZfsConst.ZFSL0Start, ZfsConst.ZFSL1Start, ZFSPartitionEnd-cZFSLabelSize*2, ZFSPartitionEnd-cZFSLabelSize};
 	
 	public ZFSPartition() {
 		
@@ -40,21 +34,23 @@ public class ZFSPartition {
 			L[l].Pack("L"+String.valueOf(l), bs, (int)(ZFSLabelStart[l])); //
 			L[l].Print();
 		}
-		PrintTools.Print10andHex("ZFSDataAfteBootStart", "%08X", ZFSDataAfteBootStart);
+		PrintTools.Print10andHex("ZFSDataAfteBootStart", "%08X", ZfsConst.ZFSDataAfteBootStart);
 		PrintTools.Print10andHex("End   LBA", "%08X", ZFSPartitionEnd);
-		log.info(" or "+ ZFSPartitionEnd/SectorLength);		
+		log.info(" or "+ ZFSPartitionEnd/ZfsConst.SectorLength);		
 	} 
 
 	public void Print() {
 
-		System.out.println("\nZFS Partition");
-		System.out.println("Start LBA = 0x" + String.format("%010X",ZFSPartitionStart) + 
-				" or " + ZFSPartitionStart/SectorLength + " sectors");
-		System.out.println("End   LBA = 0x" + String.format("%010X",ZFSPartitionEnd) + 
-				" or " + ZFSPartitionEnd/SectorLength + " sectors");
+		log.info("\nZFS Partition");
+		log.info("Start LBA = 0x" + String.format("%010X",ZFSPartitionStart) + 
+				" or " + ZFSPartitionStart/ZfsConst.SectorLength + " sectors");
+		log.info("End   LBA = 0x" + String.format("%010X",ZFSPartitionEnd) + 
+				" or " + ZFSPartitionEnd/ZfsConst.SectorLength + " sectors");
 		ZFSSize = ZFSPartitionEnd-ZFSPartitionStart;
-		System.out.println("Size = 0x"+ String.format("%08X",ZFSSize)+" or "+ 
-				ZFSSize/512+" sectors or "+ (ZFSSize/1024/1024/1024)+" Gb");
+		log.info("Size = " + ZFSSize/512+" sectors or bytes:");
+		log.info("  0x"+ String.format("%08X",ZFSSize)+"  or "+ (ZFSSize)+" b  or "+ 
+				(ZFSSize/1024)+" kb  or "+ (ZFSSize/1024/1024)+" Mb  or "+  
+				(ZFSSize/1024/1024/1024)+" Gb"); 
 	}
 
 }

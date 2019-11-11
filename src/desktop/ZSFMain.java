@@ -1,14 +1,8 @@
 package desktop;
 
 import java.util.ArrayList; 
-import org.apache.log4j.Logger;
+import org.apache.log4j.Logger; 
 
-/*
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-*/
 import hdd.PhysicalDrive;
 import tools.FileTools;  
 
@@ -24,12 +18,13 @@ public class ZSFMain {
 	static String ZFSImageDir		= "K:\\zfs\\";
 	static String ZFSImageDirTests 	= ZFSImageDir + "Images_zfsonline\\vdevs\\";
 	static String ZFSImage			= ZFSImageDirTests + "zol-0.6.1\\vdev0";
-	static PhysicalDrive pdDrv = null;
-
+	static PhysicalDrive pdDrv = null; 
+	
 	public static void main(String[] args) {	
 
-        log.info("PhysicalDrive info Ver "+Ver+" \n");
-        ZfsTestDDs(ZFSImageDirTests + "zol-0.6.1"); 
+        log.info("PhysicalDrive info Ver "+Ver+" \n"); 
+        ZfsTestDrive(ZFSDrive);
+        //ZfsTestDDs(ZFSImageDirTests + "zol-0.6.1"); 
 		/* ZfsTestDDs(ZFSImageDirTests);
 		ZfsTestDrive(ZFSDrive); */
 		if (args.length>0) { 
@@ -42,6 +37,7 @@ public class ZSFMain {
 		 
 		pdDrv = new PhysicalDrive(ZFSDrive, true); 
 		pdDrv.LogFile=ZFSImageDir; 
+		pdDrv.ViewActiveBlock();
 	}
 
 	private static void ZfsTestDDs(String dir) {

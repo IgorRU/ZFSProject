@@ -2,10 +2,11 @@ package zsfpackage;
 
 import org.apache.log4j.Logger;
 
+import hdd.Block;
 import tools.PrintTools;
 import tools.VarTools;
 
-public class ZFSZioBlockTail {
+public class ZFSZioBlockTail extends Block  {
 	private static final Logger log = Logger.getLogger(ZFSZioBlockTail.class.getName()); 
 	
 	public  long ZBT_MAGIC = 0x210da7ab10c7a11L; // 

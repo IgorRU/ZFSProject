@@ -1,19 +1,10 @@
 package zsfpackage;
 
-import java.util.HashMap;
+import org.apache.log4j.Logger; 
 
-import org.apache.log4j.Logger;
-
-import tools.PrintTools;
-
-public class ZMSObjsetType {
+public class ZMSObjsetType extends ObjType {
 	
-	private static final Logger log = Logger.getLogger(ZMSObjsetType.class.getName()); 
- 
-	private HashMap<Integer, String> hashMapDescriptor = new HashMap<>();
-	 
-	public String Descriptor;
-	public byte Num;
+	private static final Logger log = Logger.getLogger(ZMSObjsetType.class.getName());  
 
 	public ZMSObjsetType() {
 		
@@ -25,17 +16,12 @@ public class ZMSObjsetType {
 		log.trace("ZMSObjsetType is "+Num);
 		InitHashMaps();
 		Descriptor = GetDescriptorName();
-	}
-
-	public String GetDescriptorName() {				
-		
-		return PrintTools.GetHashMapKeyVlaue(hashMapDescriptor,Num); 
-	}
+	} 
 
 	public void Print() {
 		
-		System.out.println("Checksum = "+Num);
-		System.out.println("Descriptor: "+Descriptor);	
+		log.info("ZMSObjsetType = "   + Num);
+		log.info("Descriptor = " + Descriptor);	
 	}
 	
 	private void InitHashMaps() {

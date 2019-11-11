@@ -2,10 +2,11 @@ package zsfpackage;
 
 import org.apache.log4j.Logger;
 
+import hdd.Block;
 import tools.PrintTools;
 import tools.VarTools;
 
-public class ZFSlr {
+public class ZFSlr  extends Block {
 	
 	private static final Logger log = Logger.getLogger(ZFSlr.class.getName()); 
 

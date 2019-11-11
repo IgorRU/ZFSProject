@@ -10,7 +10,7 @@ import java.util.Set;
 
 import tools.PrintTools;
 
-public class ZFSCompression   {
+public class ZFSCompression  extends ObjType  {
 	
 	private static final Logger log = Logger.getLogger(ZFSCompression.class.getName()); 
 

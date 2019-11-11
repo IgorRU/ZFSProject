@@ -31,39 +31,53 @@ public class ZFSUberBlocks {
 	}
 	
 	public void Pack(byte[] bs) {
+		
 		for (int i = 0; i<UberBlocks.length; i++) {			
+			
+			log.info("Uber raw bytes = 0x" + String.format("%08X",cZFSUberArrayBegin));
 			UberBlocks[i] = new ZFSUberBlock(bs,cZFSUberArrayBegin,i);
 			long uu = UberBlocks[i].ub_txg;
 			// max txg
-			if (i==0) {
+			if (nActiveUber<0) {
+				log.debug("New active (max) txg = " + uu);
 				nActiveUber = 0;
 				nActiveUberCount = 1;
 				nActiveUberTxg= uu;
 			} else {
-				if (nActiveUberTxg<uu) {			
+				if (nActiveUberTxg<uu) {		
+					log.debug("New active (max) txg = " + uu);
 					nActiveUber    		= i;
 					nActiveUberTxg 		= (int)uu;
 					nActiveUberCount	= 0;
 				};
-				if (nActiveUberTxg==uu)
+				if (nActiveUberTxg==uu) {
 					nActiveUberCount++;
+					if (nActiveUberCount>1)
+						log.debug("Txg active (max) count > 1 at uberblock = " + uu);
+				}
 			}
-			// mix txg
-			if ((nMinUber==-1)&&(uu>0)) { 
-				nMinUber = 0;
-				nMinUberCount = 1;
-				nMinUberTxg= uu;
-			} else {
-				if ((nMinUberTxg>uu)&&(uu>0)) {			
-					nMinUber    	= i;
-					nMinUberTxg 	= (int)uu;
-					nMinUberCount 	= 0;
+			if (nMinUber==-1) { 
+				if (uu>0) {
+					log.debug("New min txg = " + uu);
+					nMinUber = 0;
+					nMinUberCount = 1;
+					nMinUberTxg= uu;
+				}
+			} else { 
+				if (nMinUberTxg>uu) {		
+					if (uu>0) {
+						log.info("New min txg = " + uu);	
+						nMinUber    	= i;
+						nMinUberTxg 	= (int)uu;
+						nMinUberCount 	= 0;
+					}
 				} 
-				if (nMinUberTxg==uu)
+				if (nMinUberTxg==uu) {
 						nMinUberCount++;
+						if (nMinUberCount>1)
+							log.debug("Txg min count > 1 at uberblock = " + uu);
+				}
 			}
-			//if (UberArray[i].isMagic)
-			//	System.out.println(String.format("%08X: ",UberArray[i].nu)+" "+UberArray[i].nUberBlock+" "+UberArray[i].btype.Descriptor);
 			if (uu>0)
 				if (!txgs.contains(uu))
 					txgs.add(uu);
@@ -74,16 +88,15 @@ public class ZFSUberBlocks {
 	
 	public void PrintActive() {
 
-		long n = UberBlocks[nActiveUber].UberOffsetAbs; 
+		long n = UberBlocks[nActiveUber].UberOffsetAbs; 	
+		log.info("---Active UberBlock----------------"); 
 		log.info("Active UberBlock is = " + nActiveUber +". Txg = "+ 
-				nActiveUberTxg + ". Offset = 0x"+String.format("%08X",n)+
-				", count = " +nActiveUberCount); 	
-		log.info("Txgs count = " +txgs.size()+ ", min = " + nMinUberTxg + 
-				", active (max) = " + nActiveUberTxg+" or 0x"+ 
-				String.format("%04X",nActiveUberTxg));
-		log.info("min count = " + nMinUberCount + ", active (max) count = " + 
-				nActiveUberCount);
-		UberBlocks[nActiveUber].Print();
+				nActiveUberTxg + ". Offset = 0x"+String.format("%08X",n)); 	
+		log.info("Array of Txgs size = " +txgs.size()); 
+		log.info("Active (count) = " + nActiveUberTxg + ", count = " + nActiveUberCount);
+		log.info("Min = " + nMinUberTxg + ", count = " + nMinUberCount);
+		UberBlocks[nActiveUber].Print();	
+		log.info("-----------------------------------"); 
 	}
 	
 }

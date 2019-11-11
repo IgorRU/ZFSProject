@@ -38,12 +38,12 @@ public class Partition {
 	public void Print() {
 
 	    log.trace("Partition "+Num+":");
-	    log.trace("Активность раздела  = "+ (isActive ? "да" : "нет")); 
-	    log.trace((isFree ? "Свободное место" : "Раздел данных."));
+	    log.trace("Active  = "+ (isActive ? "yes" : "no")); 
+	    log.trace((isFree ? "Free" : "Data"));
 	    HSCStart.Print();
 	    HSCEnd.Print();
-	    log.trace("Смещение первого сектора = 0x" + Offset1Sector); 		
-	    log.trace("Количество секторов раздела = 0x" + SectorCount); 	
-	    log.trace("Код типа раздела = "+PartName+" (0x"+String.format("%02X", PartNum)+")"); 
+	    log.trace("1st sector offset = 0x" + Offset1Sector); 		
+	    log.trace("Sectors = 0x" + SectorCount); 	
+	    log.trace("Partition type code = "+PartName+" (0x"+String.format("%02X", PartNum)+")"); 
 	}	
 }

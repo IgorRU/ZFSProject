@@ -25,10 +25,10 @@ public class HSC {
 
 	public void Print() { 
 
-		log.trace((isBegin ? "Начало раздела:" : "Конец раздела:")); 
+		log.trace((isBegin ? "Partition begin:" : "Partition end:")); 
 		log.trace("Hex   (HSC) = " + HSCBytes); 	
-		log.trace("Головка (H) = " + Head); 	
-		log.trace("Сектор  (S) = " + Sector);  	
-		log.trace("Цилиндр (С) = " + Cilinder);  		
+		log.trace("Head (H) = " + Head); 	
+		log.trace("Sector  (S) = " + Sector);  	
+		log.trace("Cilinder (С) = " + Cilinder);  		
 	}
 }

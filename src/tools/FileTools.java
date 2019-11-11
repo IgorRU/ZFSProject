@@ -61,8 +61,7 @@ public class FileTools {
 		}		
 	}		
 
-	public static boolean WriteBlock(String sFileOut, byte[] bs, int nBytes) {
-		
+	public static boolean WriteBlock_(String sFileOut, byte[] bs, int nBytes) {		
 		
 		log.debug("WriteBlock path = " +  sFileOut);
 		int n = nBytes;

@@ -1,24 +1,10 @@
 package zsfpackage;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.Map.Entry;
-
 import org.apache.log4j.Logger;
 
-import tools.PrintTools;
-
-public class ZFSObjsetType {
+public class ZFSObjsetType extends ObjType  {
 	
-	private static final Logger log = Logger.getLogger(ZFSObjsetType.class.getName()); 
-	
-	private HashMap<Integer, String> hashObjsetType = new HashMap<>();
-	private HashMap<Integer, String> hashMapDescriptor = new HashMap<>();
-	
-	public String ObjsetType;
-	public String Descriptor;
-	public byte Num;
+	private static final Logger log = Logger.getLogger(ZFSObjsetType.class.getName()); 	
 	
 	public ZFSObjsetType() {		
 		
@@ -29,45 +15,26 @@ public class ZFSObjsetType {
 		Num=b;
 		log.trace("Compression is "+Num);
 		InitHashMaps();
-		ObjsetType = GetCompressionName();
+		ObjsetType = GetName();
 		Descriptor = GetDescriptorName();
 	}
-
-	public String GetDescriptorName() {				
-		
-		return PrintTools.GetHashMapKeyVlaue(hashMapDescriptor,Num); 
-	}
-
-	public String GetCompressionName() {		
-		
-		return PrintTools.GetHashMapKeyVlaue(hashObjsetType,Num); 
-	}
-
+	
 	public void Print() {
 		
-		System.out.println("Checksum = "+Num);
-		System.out.println("Descriptor: "+Descriptor);
-		System.out.println("ObjsetType = "+ObjsetType);		
-	}
-	
-	public void PrintHashMaps() {
-
-		PrintTools.PrintHashMapKeyVlaues(hashObjsetType);
-		Set<Entry<Integer, String>> set = hashMapDescriptor.entrySet();
-		for (Map.Entry<Integer, String> me : set) {
-		    System.out.println(me.getKey() + ": " + me.getValue());
-		}
+		System.out.println("Checksum = "   + Num);
+		System.out.println("Descriptor: "  + Descriptor);
+		System.out.println("ObjsetType = " + ObjsetType);		
 	}
 	
 	private void InitHashMaps() {
 
-		hashObjsetType.put(0, "DMU_OST_NONE");
-		hashObjsetType.put(1, "DMU_OST_META");
-		hashObjsetType.put(2, "DMU_OST_ZFS");
-		hashObjsetType.put(3, "DMU_OST_ZVOL");
-		hashObjsetType.put(4, "DMU_OST_OTHER");
-		hashObjsetType.put(5, "DMU_OST_ANY");
-		hashObjsetType.put(6, "DMU_OST_NUMTYPES");
+		hashMapType.put(0, "DMU_OST_NONE");
+		hashMapType.put(1, "DMU_OST_META");
+		hashMapType.put(2, "DMU_OST_ZFS");
+		hashMapType.put(3, "DMU_OST_ZVOL");
+		hashMapType.put(4, "DMU_OST_OTHER");
+		hashMapType.put(5, "DMU_OST_ANY");
+		hashMapType.put(6, "DMU_OST_NUMTYPES");
 
 		hashMapDescriptor.put(0, "inherit"); 
 		hashMapDescriptor.put(1, "MOS"); 

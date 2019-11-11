@@ -2,10 +2,11 @@ package zsfpackage;
 
 import org.apache.log4j.Logger;
 
+import hdd.Block;
 import tools.PrintTools;
 import tools.VarTools;
 
-public class ZFSZilHeader {
+public class ZFSZilHeader extends Block {
 	
 	private static final Logger log = Logger.getLogger(PrintTools.class.getName()); 
 
@@ -15,16 +16,17 @@ public class ZFSZilHeader {
 	public  DNblkptr zh_log = new DNblkptr();
 	private long zh_claim_seq;
 	private long zh_flags;
-	private long zh_claim_ir_seq;
+	private long zh_claim_ir_seq; 
 
 	public ZFSZilHeader() {
 		
 	}
 	
-	public void Pack(byte[] bs, int ZIL_offset, int len) {
+	public void Pack(byte[] bs, int ZIL_offset, int size) {
 		
 		log.trace("Pack");
 		nu = ZIL_offset;
+		braw = VarTools.byteArray2byteArrayShort(bs, ZIL_offset, size);
 		zh_claim_txg 	= VarTools.ByteArray2Long1(bs,nu+0x00,8);
 		zh_replay_seq 	= VarTools.ByteArray2Long1(bs,nu+0x08,8);
 		zh_log.Pack(bs, nu+0x10);
@@ -43,6 +45,6 @@ public class ZFSZilHeader {
 		PrintTools.Print10andHex("zh_flags",       "%08X",zh_flags);
 		PrintTools.Print10andHex("zh_claim_ir_seq","%08X",zh_claim_ir_seq);
 		zh_log.Print();
-	}
+	} 
 	
 }

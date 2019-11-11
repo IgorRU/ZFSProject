@@ -1,5 +1,6 @@
 package zsfpackage;
 
+import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -10,14 +11,15 @@ import org.apache.log4j.Logger;
 import tools.PrintTools;
 import tools.VarTools;
 
-public class ZFSChecksum {
+public class ZFSChecksum  extends ObjType {
 	
-	private static final Logger log = Logger.getLogger(ZFSChecksum.class.getName()); 
+	private static final Logger log = Logger.getLogger(ZFSChecksum.class.getName());
 
-	public String Algorothm = "inherit";
-	public String Descriptor = "inherit";
-	public byte Num = 0;
-
+	private static long[] checksum = new long[4]; 
+	
+	public byte Num = -1;
+	public int CHECKSUM_DEFAULT = 7;
+	
 	private HashMap<Integer, String> hashMapAlgorothm  = new HashMap<>();
 	private HashMap<Integer, String> hashMapDescriptor = new HashMap<>();
 	
@@ -30,7 +32,7 @@ public class ZFSChecksum {
 		Num=b;
 		log.trace("Checksum is "+Num);
 		InitHashMaps();
-		Algorothm = GetAlgorothmName();
+		ObjsetType = GetName();
 		Descriptor = GetDescriptorName();
 	}
 
@@ -44,6 +46,7 @@ public class ZFSChecksum {
     }
 	
 	public String HashWithJavaMessageDigest(String originalString) {
+		
          MessageDigest digest = null;
 		 try {
 			digest = MessageDigest.getInstance("SHA-256");
@@ -52,36 +55,34 @@ public class ZFSChecksum {
 		 }
          byte[] encodedhash = digest.digest(originalString.getBytes(StandardCharsets.UTF_8));
          return VarTools.bytesToHex(encodedhash);
-    }
-	
-	 
-	public String GetAlgorothmName() {		
-		
-		return PrintTools.GetHashMapKeyVlaue(hashMapAlgorothm, Num); 
-	}
-	
-	public String GetDescriptorName() {		
-
-		return PrintTools.GetHashMapKeyVlaue(hashMapDescriptor, Num); 
-	}
+    } 
 
 	private void Init1(int n, String Algorothm, String Descriptor) {
 
 		hashMapAlgorothm.put( n, Algorothm);
 		hashMapDescriptor.put(n, Descriptor); 		
 	}
-	private void InitHashMaps() {
-		 
-		Init1(0, "inherit",		"inherit");
-		Init1(7, "fletcher4",	"fletcher4");
-		Init1(8, "SHA256",		"SHA256");		  	
+	
+	private void InitHashMaps() {  
+		
+		Init1(0, "inherit",					 "inherit");
+		Init1(1, "CHECKSUM_ON",				 "CHECKSUM_ON");
+		Init1(2, "ZIO_CHECKSUM_OFF",		 "ZIO_CHECKSUM_OFF");
+		Init1(3, "ZIO_CHECKSUM_LABEL",		 "ZIO_CHECKSUM_LABEL");
+		Init1(4, "ZIO_CHECKSUM_GANG_HEADER", "ZIO_CHECKSUM_GANG_HEADER");
+		Init1(5, "CHECKSUM_ZILOG",			 "CHECKSUM_ZILOG");
+		Init1(6, "fletcher2",				 "fletcher2");
+		Init1(7, "fletcher4",				 "fletcher4");
+		Init1(8, "SHA256",					 "SHA256");		
+		Init1(9, "ZILOG2",					 "ZILOG2");		
+		Init1(10, "CHECKSUM_FUNCTIONS",		 "CHECKSUM_FUNCTIONS");		  	
 	}	
 
 	public void Print() {
 		
 		System.out.println("Checksum = "+Num);
 		System.out.println("Descriptor: "+Descriptor);
-		System.out.println("Algorothm = "+Algorothm);		
+		System.out.println("Algorithm = "+ObjsetType);		
 	}
 	
 	public void PrintHashMaps() {
@@ -90,12 +91,50 @@ public class ZFSChecksum {
 		PrintTools.PrintHashMapKeyVlaues(hashMapDescriptor);
 	}
 	
+	static void fletcher_4(byte[] buf, int size) {		
+		
+		int[] bufi = VarTools.ByteArray2IntArray(buf, ByteOrder.LITTLE_ENDIAN); 		
+		long a = 0;
+		long b = 0;
+		long c = 0;
+		long d = 0; 			
+		for (int ip=0; ip < bufi.length; ip++) {			
+			a += bufi[0];
+			b += a;
+			c += b;
+			d += c;
+		}		
+		checksum[0] = a;
+		checksum[1] = b;
+		checksum[2] = c;
+		checksum[3] = d; 		
+	}
+	
+	/*
+	static void fletcher_4(const void* buf, uint64_t size, cksum_t* zcp)
+	{
+		const uint32_t* ip = (const uint32_t*)buf;
+		const uint32_t* ipend = ip + (size / sizeof(uint32_t));
+
+		uint64_t a, b, c, d;
+
+		for(a = b = c = d = 0; ip < ipend; ip++)
+		{
+			a += ip[0];
+			b += a;
+			c += b;
+			d += c;
+		}
+
+		zcp->set(a, b, c, d);
+	}
+	*/
 	public void fletcher_8( ) {
 		
 		// https://stackoverflow.com/questions/35886276/what-is-the-correct-implementation-of-the-8-bit-fletcher-algorithm-in-java
 		// https://stackoverflow.com/questions/8315215/checksum-algorithm-based-on-j-g-fletcher
 		// https://en.wikipedia.org/wiki/Fletcher%27s_checksum#Straightforward 
-		
+		/*
 		String bin = "100100101011111011101011";
 		char[] cA = bin.toCharArray();
 		int ckA = 0, ckB = 0;
@@ -106,6 +145,34 @@ public class ZFSChecksum {
 		System.out.println(ckA);
 		System.out.println(ckB);
 		System.out.println((ckB << 8) | ckA);
+		*/
 	}
+	public void fletcher_2( ) {
+		
+	}
+	/*
+	 static void fletcher_2(const void* buf, uint64_t size, cksum_t* zcp)
+{
+	const uint64_t* ip = (const uint64_t*)buf;
+	const uint64_t* ipend = ip + (size / sizeof(uint64_t));
+
+	uint64_t a0, b0, a1, b1;
+
+	for(a0 = b0 = a1 = b1 = 0; ip < ipend; ip += 2)
+	{
+		a0 += ip[0];
+		a1 += ip[1];
+		b0 += a0;
+		b1 += a1;
+	}
+
+	zcp->set(a0, a1, b0, b1);
+}
+
+ 
+
+
+	 */
+	
 	
 }

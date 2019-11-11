@@ -1,21 +1,10 @@
 package zsfpackage;
 
-import java.util.HashMap;
-
 import org.apache.log4j.Logger;
 
-import tools.PrintTools;
-
-public class ZFSBlockType {
+public class ZFSBlockType  extends ObjType {
 	
-	private static final Logger log = Logger.getLogger(ZFSBlockType.class.getName()); 
-
-	private HashMap<Integer, String> hashMapType = new HashMap<>();
-	private HashMap<Integer, String> hashMapDescriptor = new HashMap<>();
-	
-	public String Type			= "DMU_OT_NONE";
-	public String Descriptor	= "Unallocated object";
-	public byte   Num 			= 0;
+	private static final Logger log = Logger.getLogger(ZFSBlockType.class.getName());  
 	
 	public ZFSBlockType() {
 
@@ -26,26 +15,16 @@ public class ZFSBlockType {
 		Num=b;
 		log.trace("ZFSBlockType = "+b);
 		InitHashMaps();
-		Type = GetBlockType();
+		ObjsetType = GetName();
 		Descriptor = GetDescriptorName();
 	}
 	
 	public void Print() {
 		
-		System.out.println("BlockType = "+Num);
-		System.out.println("Descriptor: "+Descriptor);
-		System.out.println("Type = "+Type);		
-	}
-	
-	public String GetDescriptorName() {		
-		
-		return PrintTools.GetHashMapKeyVlaue(hashMapDescriptor, (int)Num);
-	}
-
-	public String GetBlockType() {		
-		
-		return PrintTools.GetHashMapKeyVlaue(hashMapType, (int)Num); 
-	}
+		System.out.println("BlockType = " + Num);
+		System.out.println("Descriptor: " + Descriptor);
+		System.out.println("Type = "      + ObjsetType);		
+	} 
 	
 	private void InitHashMaps() {
 

@@ -4,7 +4,6 @@ import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
 import org.apache.log4j.Logger;
 
 public class PrintTools {
@@ -54,7 +53,7 @@ public class PrintTools {
 		  
 		  	Set<Map.Entry<Integer, String>> set = h.entrySet();
 			for (Map.Entry<Integer, String> me : set) {
-			    System.out.println(me.getKey() + ": " + me.getValue());
+				log.info(me.getKey() + ": " + me.getValue());
 			}
 	  }
 
@@ -66,12 +65,13 @@ public class PrintTools {
 				return me.getValue();
 		return "";
 	  }
-	  public static void PrintByreArr2Hex(String sTitle, String sHex, byte[] b, int offset, int count) {
+	  public static void PrintByreArr2Hex(String sTitle, String sHexFormat, byte[] b, int offset, int count) {
 			
-			System.out.print(sTitle + " = 0x");
+			System.out.print(sTitle + " = 0x");	
+			String sHex = "";
 			for (int i=offset; i<=count+offset-1; i++) 
-			    System.out.print(String.format(sHex,b[i]));	
-			System.out.println("");		
+				sHex = sHex + String.format(sHexFormat,b[i]);	
+			log.info(sHex);
 	  }
 
 	  public static void Print10andHex(String sTitle, String sHex, BigInteger b) {
@@ -93,4 +93,8 @@ public class PrintTools {
 		
 		  log.info(sTitle + " = " + b + " or 0x" + String.format(sHex,b));	 
 	  }
+
+	public static String PrintIsNull(Object obj, String sTag) { 
+		return  sTag + (obj==null ? " null" : " no null");	
+	}
 }

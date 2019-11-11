@@ -2,6 +2,8 @@ package tools;
 
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.IntBuffer;
 
 import org.apache.log4j.Logger;
 
@@ -162,7 +164,6 @@ public class VarTools {
 		for (int i=0; i<8; i++)
 			b[i]=bs[n+i]; 		
 		BigInteger bi = new BigInteger(b);
-		// TODO Auto-generated method stub
 		return bi;
 	}
 
@@ -183,6 +184,16 @@ public class VarTools {
 	      b = b.add(TWO_64);
 	   }
 	   return b.toString();
+	}
+
+	public static int[] ByteArray2IntArray(byte[] byteArray, ByteOrder bo) {
+		IntBuffer intBuf = ByteBuffer
+			.wrap(byteArray)
+			.order(bo)
+			.asIntBuffer();
+		int[] array = new int[intBuf.remaining()];
+		intBuf.get(array);
+		return array;
 	}
 	
 }
