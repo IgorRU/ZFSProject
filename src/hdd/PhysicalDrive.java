@@ -1,6 +1,7 @@
 package hdd;
 
 import java.io.File;
+import java.util.Arrays;
 
 import org.apache.log4j.Logger;
 
@@ -99,7 +100,7 @@ public class PhysicalDrive {
 			long adr = ZFSStart + b.address[i];
 			PrintTools.Print10andHex("addr["+i+"]","%08X",adr);	    
 			FileTools.SetOffset(gptpd.fc, adr);
-			int sectors = b.lsize+1;
+			int sectors = b.psize+1;
 			int size = sectors*ZfsConst.SectorLength;
 			// read ub_rootbp
 			byte[] bbb = FileTools.GetBytes(gptpd.raf, gptpd.fc, size); // 4k = MOS size
@@ -107,36 +108,64 @@ public class PhysicalDrive {
 			log.info("compression = " + alg + ", checksum = " + b.cksum.ObjsetType); 
 			byte[] bout = null;
 			String sF = sDirBlockWrite+"Blocks/"+String.format("%020X",adr)+"_"+b.txgLogic;
-			if (alg.equals("none")) {
-				sF = sF+".dat"; 
-				bout = bbb.clone();
-			}
 			if (alg.equals("lzjb")) {
 				FileTools.WriteBlock_(sF+".lzjb", bbb, size);	
 				bout = LZJBjava.decompress(bbb);	
 				log.debug("bout len"+bout.length);
 				sF = sF+" decomp.dat";	 	
-			}  
-			if (alg.equals("lz4")) {
-				FileTools.WriteBlock_(sF+".lz4", bbb, size);	
-				bout = LZ4java.lz4DecompressSlow(bbb);
-				log.debug("bout len"+bout.length); 	
-			}  
+			}  else
+				if (alg.equals("lz4")) {
+					FileTools.WriteBlock_(sF+".lz4", bbb, size);	
+					bout = LZ4java.lz4DecompressSlow(bbb);
+					log.debug("bout len"+bout.length); 	
+				}  else  {
+					sF = sF+".dat"; 
+					bout = bbb.clone();
+					}
 			log.info("------------------------------------------------------------");
-			FileTools.WriteBlock_(sF, bout, size); // write unpack (nonpask) dnode_phys	
 			DNodePhys dn_root = new DNodePhys();
 			// Analize dnode_phys	
 			dn_root.Pack(bout, 0, size);
+			dn_root.WriteBlock(sF);
 			dn_root.Print(true);
-			for (int j=0; j<3; j++) {
-				DNblkptr dn1 = dn_root.dn_blkptr[j];
-				if (dn1.isNull)
-					System.out.println("dn_root.dn_blkptr["+j+"] is null");
-				else {		
-					dn1.Print();
+			boolean isMOSOk = false;
+			byte[] b0 = dn_root.dn_blkptr[0].braw;
+			if (dn_root.dn_blkptr[1].isNull||dn_root.dn_blkptr[2].isNull) {
+				log.info("dn_root.dn_blkptr[1..2] is null.");
+				isMOSOk = true;
+			} else {				
+				byte[] b1 = dn_root.dn_blkptr[1].braw;
+				byte[] b2 = dn_root.dn_blkptr[2].braw;
+				if ((!Arrays.equals(b0, b1))||(!Arrays.equals(b0, b2)))
+					log.error("Raw arrays dn_root.dn_blkptr[0..2] not equal.");
+				else {
+					isMOSOk = true;					
 				}
-			}			
-			System.out.println(" ");			
+			} 		
+			if (isMOSOk) {
+				alg =  dn_root.dn_blkptr[0].compress.Algorithm; 
+				log.debug("dn_root compress is "+alg); 	
+				DNblkptr dn = dn_root.dn_blkptr[0];
+				sectors = dn.psize+1;
+				size = sectors*ZfsConst.SectorLength;
+				for (int ii=0; ii<3; ii++)
+					log.info("address["+ii+"]="+String.format("%020X",dn.address[ii]));
+				FileTools.SetOffset(gptpd.fc, dn.address[0]);
+				byte[] bs = FileTools.GetBytes(gptpd.raf,gptpd.fc, size);
+				log.debug("bs len is "+bs.length); 				
+				sF = sDirBlockWrite+"Blocks/"+String.format("%020X",adr)+"_dn_root."+alg;				
+				if (alg.equals("lz4")) { 
+					FileTools.WriteBlock_(sF, bs, size);	
+					FileTools.CheckLZ4Block(bs,size);
+					//bout = LZ4java.lz4DecompressSlow(b0);	
+					bout = LZ4java.lz4DecompressFileFromStream(sF, size);
+					log.debug("bout len"+bout.length); 
+					PrintTools.Dump(bout, 0, bout.length);						
+				}  
+			} else {
+				log.error("Bad MOS format");
+			}
+			log.info("dn_root end.");			
 		}
 		/*
 		for (int i=0; i<3; i++) {

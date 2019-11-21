@@ -63,6 +63,7 @@ public class FileTools {
 
 	public static boolean WriteBlock_(String sFileOut, byte[] bs, int nBytes) {		
 		
+		//CheckLZ4Block(bs, nBytes);
 		log.debug("WriteBlock path = " +  sFileOut);
 		int n = nBytes;
 		byte[] bOut = new byte[n];
@@ -125,6 +126,20 @@ public class FileTools {
 		}
 		log.debug("Block dir = " + sDir);
 		return sDir + "/";
+	}
+
+	public static void CheckLZ4Block(byte[] bs, int size) {
+
+		// 0x184D2204
+		if ((bs[0]==0x18)&&(bs[1]==0x4D)&&(bs[2]==0x22)&&(bs[3]==0x04)) {
+			log.info("Little endian format"); 
+			return;
+		}
+		if ((bs[3]==0x18)&&(bs[2]==0x4D)&&(bs[1]==0x22)&&(bs[0]==0x04)) {
+			log.info("Big endian format");
+			return;
+		}
+		log.info("No");		
 	}
 	
 }

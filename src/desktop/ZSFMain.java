@@ -12,8 +12,9 @@ public class ZSFMain {
 	
 	static long   serialVersionUID 	= 1L;
 	
-	static int 	  BestZfsLabel 		= 2; // 0..3
+	static int 	  BestZfsLabel 		= 2; 		// 0..3
 	static String Ver 				= "0.0.1";
+	static String Title 			= "PhysicalDrive info Ver "+Ver+" \n";
 	static String ZFSDrive			= "\\\\.\\PhysicalDrive1";
 	static String ZFSImageDir		= "K:\\zfs\\";
 	static String ZFSImageDirTests 	= ZFSImageDir + "Images_zfsonline\\vdevs\\";
@@ -22,7 +23,7 @@ public class ZSFMain {
 	
 	public static void main(String[] args) {	
 
-        log.info("PhysicalDrive info Ver "+Ver+" \n"); 
+        log.info(Title); 
         ZfsTestDrive(ZFSDrive);
         //ZfsTestDDs(ZFSImageDirTests + "zol-0.6.1"); 
 		/* ZfsTestDDs(ZFSImageDirTests);
