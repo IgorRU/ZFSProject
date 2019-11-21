@@ -12,7 +12,7 @@ public class ZSFMain {
 	
 	static long   serialVersionUID 	= 1L;
 	
-	static int 	  BestZfsLabel 		= 2; 		// 0..3
+	static int 	  BestZfsLabel 		= 2; 		  //  0..3
 	static String Ver 				= "0.0.1";
 	static String Title 			= "PhysicalDrive info Ver "+Ver+" \n";
 	static String ZFSDrive			= "\\\\.\\PhysicalDrive1";
